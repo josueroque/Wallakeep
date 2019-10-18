@@ -1,6 +1,6 @@
 import React,{Component,Fragment} from 'react';
 import { getAds } from '../Api/Api';
-
+import { Link } from "react-router-dom";
 class List extends Component {
     constructor(props){
         super(props);
@@ -14,10 +14,16 @@ class List extends Component {
     const list=await getAds();
     this.setState({
         Adlist:list
-    })
-    console.log('hola'+list[0]);
+    });
+    }
+ //   console.log('hola'+list[0]);
  
-}    
+  buttonClick=(e)=>{
+    e.preventDefault();
+    this.props.history.push('/detail/:id');
+
+    }
+   
      render() { 
         return (
       <Fragment>   
@@ -34,7 +40,9 @@ class List extends Component {
                             <img src={`http://localhost:3001/${Ad.photo}`} alt='Imagen de anuncio' >
                             </img> 
                             <a href="/image">{Ad.name}</a>
-                         </div>                         
+                         </div> 
+                         {/* <button onClick={this.buttonClick}>Detalle</button>                         */}
+                         <Link to={`/detail/${Ad._id}`}>See detail</Link>
                       </div>
                         )}
 
