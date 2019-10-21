@@ -34,3 +34,14 @@ export const  getAdName= async (name) =>{
     console.log('devuelvo '+data);
     return data;   
 }
+
+export const  getTags= async (name) =>{
+
+    const requestUrl=API_URL+'apiv1/tags';
+    console.log(requestUrl);
+    const response = await axios.get(requestUrl);
+   //console.log(response);
+    const data  = await response.data.results;
+    console.log('devuelvo '+data);
+    return data;   
+}
