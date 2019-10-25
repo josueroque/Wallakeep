@@ -1,7 +1,9 @@
 import React,{Component,Fragment} from 'react';
-import { getAds } from '../Api/Api';
+import { getAds,getAdName,getTags, filterByTag } from '../Api/Api';
 import { Link } from "react-router-dom";
 import Header from './Header';
+import UserConsumer from '../context/UserContext';
+import Navbar from './Navbar';
 //import Form from './Form';
 
 class List extends Component {
@@ -9,9 +11,73 @@ class List extends Component {
         super(props);
         this.state = { 
             Adlist:[],
-            id:''
+            id:'',
+            Adname:'',
+            tag:'',
+            tags:[]
+
          };
         this.getList();
+        this.getAllTags();
+       
+        //console.log( this.props.location);
+    }
+    getAllTags=async()=>{
+        const allTags=await getTags();
+    //    console.log('obtengo'+allTags);
+        this.setState({
+            tags:allTags
+        });
+    }
+
+    filterTag=async(e)=>{
+        // this.setState({
+        //     Adname:e.target.value
+        // })
+        let list=[];
+        console.log(e.target);
+        if (e.target.value!==''){
+            list=await filterByTag (e.target.value);
+            this.setState({
+                Adlist:list,
+                
+            });
+            console.log('desde if' + list);
+        }
+        else{
+          this.getList ();
+          console.log('desde else' + this.state.Adlist);
+        }
+  
+
+          console.log('hola');  
+          console.log(list);
+       // console.log(this.state.Adname);
+    }
+
+
+    onNameChange=async(e)=>{
+        // this.setState({
+        //     Adname:e.target.value
+        // })
+        let list=[];
+        if (e.target.value!==''){
+            list=await getAdName (e.target.value);
+            this.setState({
+                Adlist:list,
+                
+            });
+            console.log('desde if' + list);
+        }
+        else{
+          this.getList ();
+          console.log('desde else' + this.state.Adlist);
+        }
+  
+
+          console.log('hola');  
+          console.log(list);
+       // console.log(this.state.Adname);
     }
 
     getList=async()=>{
@@ -20,13 +86,18 @@ class List extends Component {
         Adlist:list,
         
     });
+   
     }
  //   console.log('hola'+list[0]);
  
-  buttonClick=(e)=>{
-    e.preventDefault();
+    seeDetail=(e)=>{
+        //e.preventDefault();
+      //  this.props.history.push("/"+);
 
+    }
 
+    componentDidUpdate(){
+      //  console.log(this.state);
     }
    
      render() { 
@@ -34,24 +105,25 @@ class List extends Component {
          height:'20vw'
         }
         let style2={
-         height:'25vw'
+         height:'20vw'
         }
-        let style3={
-         height:'15vw'
-        }
+
 
         return (
       <Fragment> 
-       <Header />
+      
        {/* <Form /> */}
             {/* <div>
 
             <input type="text" placeholder="nombre anuncio"/>
             </div>    */}
-
+                   <Navbar />
               <form
               onSubmit={e=> {
                 e.preventDefault();
+                localStorage.setItem('_id',undefined);
+                this.props.history.push("/Create-Edit");
+                
              // value.obtenerEventos(this.state)
             }}          
            >
@@ -64,11 +136,11 @@ class List extends Component {
                 <div className="uk-column-1-4@m uk-margin">
                     <div className="uk-margin" uk-margin="true" >
                         <input 
-                            name="nombre"
+                            name="name"
                             className="uk-input"
                             type="text"
                             placeholder="Nombre de Anuncio"
-                            onChange={this.obtenerDatosEvento}
+                            onChange={this.onNameChange}
                         />
                     </div>
 
@@ -77,10 +149,17 @@ class List extends Component {
                     <div className="uk-margin" uk-margin="true" >
                         <select
                         className="uk-select"
-                        name="categoria"
-                        onChange={this.obtenerDatosEvento}
+                        name="tag"
+                        onChange={this.filterTag}
                         >
-                            <option value="">--Selecciona un tag--</option>
+                            <option value="" >--Select a tag--</option>
+                            {
+                                this.state.tags.map(tag=>
+                                  
+                                        <option key={tag}  value={tag} >{tag}</option>
+                                 
+                                )
+                            }
   
 
                         </select>
@@ -92,13 +171,13 @@ class List extends Component {
                             className="uk-input"
                             type="number"
                             placeholder="Precio de Anuncio"
-                            onChange={this.obtenerDatosEvento}
+                            onChange={this.filterTag}
                         />
                     </div>
 
                     <div>
                         <input type="submit" className="uk-button uk-button-danger"
-                        value="Busca por precio"/>
+                        value="Create new ad"/>
                     </div>
                     
                 </div>
@@ -108,20 +187,33 @@ class List extends Component {
                
                     {this.state.Adlist.map(Ad =>
                       <div key={Ad._id} className="col-md-3 col-sm-6">
+                         <UserConsumer>
                          <div className="card" style={style1}>
-                          <div className="card-image" style={style2}>
-                              <img style={style3} src={`http://localhost:3001/${Ad.photo}`} alt='Imagen de anuncio' >
-                              </img>
-                           </div>    
-                    
+                         
+                              {/* <input onClick={this.seeDetail} type="image" style={style3} src={`http://localhost:3001/${Ad.photo}`} alt='Imagen de anuncio' >
+                                  
+                              </input> */}
+                             <Link   to={{
+                           pathname: `/detail/${Ad._id}` , 
+                           state:{  
+                              adId:Ad._id,
+                                                           
+                           }
+                         
+                        }}>  
+                         <div className="card-image" >
+                            <img src={`http://localhost:3001/${Ad.photo}`} alt='Imagen de anuncio' style={style2} ></img>  
+                        </div>   
+                        
+                        </Link>
+                           
+                         
                          </div> 
-                         {/* <button onClick={this.buttonClick}>Detalle</button>                         */}
-                         <Link className="uk-button uk-button-danger"  to={{
-                           pathname: `/detail/${Ad._id}`,
-                           state:{
-                              adId:Ad._id
-                         }
-                        }}>        <h4>{Ad.name}</h4> </Link>
+                 
+                         <p className="uk-legend uk-text-center">{Ad.name +' $'+Ad.price+ ' '+ Ad.tags} </p> 
+                         {/* <input type="submit" className="uk-button uk-button-danger"
+                                        value="Editar"/>   */}
+                    </UserConsumer>
                       </div>
                         )}
 

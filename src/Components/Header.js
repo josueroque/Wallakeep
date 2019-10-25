@@ -1,11 +1,31 @@
-import React from 'react';
+import React,{Component,Fragment} from 'react';
 
-const Header = () => (
-    <header className="uk-margin" uk-margin="true">
-            <h1 className="uk-text-center">Wallakeep </h1>
+class Header  extends Component {
+    state = {  }
+
+
+    render() { 
        
-    </header>
+        return ( 
+            <Fragment>
+            <header  className="uk-margin" uk-margin="true">
+            <h1  className=" ">Wallakeep </h1>
+ 
+            </header>
+  
+            {/* <div  className="col-md-3 col-sm-6">
+                Tag: {localStorage.getItem('tag')}
+            </div>  */}
+            </Fragment>
+         );
+    }
+
+  
+        
     
-)
+}
+ 
+
+
  
 export default Header ;

@@ -1,31 +1,45 @@
 import React,{Component,Fragment} from 'react';
 import {getTags} from '../Api/Api';
 import {UserConsumer} from '../context/UserContext';
-import { valueToNode } from '@babel/types';
+
 class   Register extends Component {
-    constructor(props){
-        super(props);
-        this.state={
- 
+
+       state={
+            name:'',
+            surname:'',
+            tag:'',
             tags:[]
         }
-        this.getAllTags();
+
+        componentDidMount(){
+            this.getAllTags();
+        }
+        
        
-    }
+    
     getAllTags=async()=>{
         const allTags=await getTags();
-        console.log('obtengo'+allTags);
+    //    console.log('obtengo'+allTags);
         this.setState({
             tags:allTags
         });
     }
-    setUser=(e)=>{
-      //  e.preventDefault();
-      
+   
+    setUser1=(e)=>{
+
+        this.setState({
+            [e.target.name]:e.target.value
+        })
+
+        localStorage.setItem('name',this.state.name);
+        localStorage.setItem('surname',this.state.surname);
+        localStorage.setItem('tag',this.state.tag);
+
+
         
     }
     render() { 
-        console.log('desde reg '+ this.state.tags);
+    //    console.log('desde reg '+ this.state.tags);
         return (  
            
               
@@ -36,26 +50,53 @@ class   Register extends Component {
                     <br/> 
                     <UserConsumer>
                         {(value)=>{
-                         console.log(value);
+                        // console.log(value);
                          return(
                     <form 
-
+                    onSubmit={e=> {
+                        e.preventDefault();
+                      //  console.log(e.target.value);
+                     //   console.log(e);
+                     value.setUser(this.state);
+                     this.props.history.push("/list");
+                    // console.log('desde context' + value.name);
+                    }}         
                     >
                         <div className="form-group">
                             <label for="name">Name:</label>
-                            <input type="text" className="form-control" id="name" placeholder="Enter name" name="name" />
+                            <input
+                                type="text"
+                                 className="form-control col-xs-2" 
+                                 id="name" 
+                                 placeholder="Enter name" 
+                                 name="name"
+                                 onChange={this.setUser1}
+                                 required
+                                 />
                         </div>
                         <div className="form-group">
                             <label for="surname">Surname:</label>
-                            <input type="text" className="form-control" id="surname"/>
+                            <input 
+                                type="text" 
+                                className="form-control col-xs-2" 
+                                name="surname"
+                                id="surname"
+                                onChange={this.setUser1}
+                                required
+                            />
                         </div>
                         <label for="tags">Tag:</label>
-                        <select className="form-control">
-                            <option >--Select a tag--</option>
+                        <select 
+                            className="form-control col-xs-2"
+                            onChange={this.setUser1}
+                            name="tag"
+                            class="custom-select browser-default" required
+                        >
+                            <option value="" >--Select a tag--</option>
                             {
                                 this.state.tags.map(tag=>
                                   
-                                        <option key={tag} >{tag}</option>
+                                        <option key={tag}  value={tag} >{tag}</option>
                                  
                                 )
                             }
@@ -63,8 +104,8 @@ class   Register extends Component {
 
                         </select>
                       
-                        <br/>
-                        <button onChange={this.setUser} type="submit" className="uk-button uk-button-danger">Submit</button>
+                        <br/>  <br/> <br/>
+                        <input type="submit"  className="uk-button uk-button-danger" value="Submit" ></input>
                     </form>
                     )
                 }}

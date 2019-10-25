@@ -7,26 +7,38 @@ class UserProvider extends Component {
     state = { 
         name:'',
         surname:'',
-        tag:''
+        tag:'',
+        idDetail:''
 
      }
 
      componentDidMount(){
-        this.setUser();
+       // this.setUser();
     }
      
 
-setUser=()=>{
-
+setUser=(e)=>{
+console.log(e);
     this.setState({
-        name:'Josue',
-        surname:'Roque',
-        tag:'work'
+        name:e.name,
+        surname:e.surname,
+        tag:e.tag,
+        idDetail:''
 
-})
- 
-
+    })
 }
+
+setId=(id)=>{
+    console.log(id);
+        this.setState({
+            name:this.state.name,
+            surname:this.state.surname,
+            tag:this.state.tag,
+            idDetail:id
+    
+        })
+    }
+
 
     render() { 
         return ( 
@@ -34,8 +46,8 @@ setUser=()=>{
             value={{
                 name:this.state.name,
                 surname:this.state.surname,
-                tag:this.state.tag
-        
+                tag:this.state.tag,
+                setUser:this.setUser
             }}
             >
                 {this.props.children}
