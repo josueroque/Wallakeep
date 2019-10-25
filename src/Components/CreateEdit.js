@@ -1,10 +1,12 @@
 import React,{Component,Fragment} from 'react';
-import { getAd,updateAd } from '../Api/Api';
+import { getAd,updateAd,createAd } from '../Api/Api';
 import Header from './Header';
 import UserConsumer from '../context/UserContext';
 import { Link } from "react-router-dom";
 import{getTags} from '../Api/Api';
 import Navbar from './Navbar';
+import { ClipLoader } from 'react-spinners';
+import { css } from '@emotion/core';
 //import { Link } from "react-router-dom";
 class CreateEdit extends Component {
     constructor(props){
@@ -23,7 +25,9 @@ class CreateEdit extends Component {
            description:'',
            price:'',
            type:'' ,
-           create:false
+           photo:'',
+           create:false,
+           loading:false
          };
          this.getAdvert(adId);
         console.log('hola condicion1'+adId+pathname);
@@ -40,7 +44,9 @@ class CreateEdit extends Component {
                 description:'',
                 price:'',
                 type:'',
-                create:true    
+                photo:'',
+                create:false,
+                loading:false    
               };  
         }
     }
@@ -70,7 +76,9 @@ class CreateEdit extends Component {
                 description:'',
                 price:'',
                 type:'',
-                create:true    
+                photo:'',
+                create:true,
+                loading:false    
               };  
               console.log('hola condicion3');
         }
@@ -87,21 +95,44 @@ componentDidMount(){
     // if (this.state.create===true){
         
             this.setState({ state: this.state });
-
+         //  this.setState({loading:false});  
+console.log('seteado '+this.state.loading);
 //    }
 }
-
+ wait=async(ms)=> {
+    return new Promise(resolve => {
+      setTimeout(resolve, ms);
+    });
+  }
 guardarCambios=async()=>{
     let editedAd={
         name:this.state.name,
         description:this.state.description,
-        type:this.state.type,
+        type:this.state.type.toLowerCase(),
         price:this.state.price,
         tags:this.state.selectedTags,
         id:this.state._id
     }
-    const response=await updateAd(editedAd);
+//    const response=setTimeout( await updateAd(editedAd),5000);
+    const response= await updateAd(editedAd);
+    await this.wait(500);
+    this.setState({loading:false});
   //  console.log(response);
+}
+
+guardarNuevo=async()=>{
+ //this.setState({loading:true});
+    let createdAd={
+        name:this.state.name,
+        description:this.state.description,
+        type:this.state.type.toLowerCase(),
+        price:this.state.price,
+        tags:this.state.selectedTags,
+         photo:this.state.photo
+    }
+    const response=await createAd(createdAd);
+    await this.wait(500);
+    this.setState({loading:false});
 }
 
 
@@ -183,7 +214,8 @@ this.setState({
             name:Advert.name,
             description:Advert.description,
             price:Advert.price,
-            type:Advert.type 
+            type:Advert.type, 
+            photo:Advert.photo
         });
 
 
@@ -191,7 +223,17 @@ this.setState({
 
     render() { 
 
-//console.log(this.state.photo);
+
+
+
+const override = css`
+    display: block;
+    margin: 0 auto;
+    border-color: red;
+`;
+
+console.log('desde render '+this.state.loading );
+
         return (  
             <Fragment>
             <Navbar />
@@ -203,7 +245,13 @@ this.setState({
                                         {  this.state.create===true ?
                                         <img  src={this.state.photo} alt='Imagen de anuncio' ></img>
                                          : 
-                                         <img  src={`http://localhost:3001/${this.state.Ad.photo}`} alt='Imagen de anuncio' ></img>  
+                                         this.state.Ad.photo ?
+                                         this.state.Ad.photo.includes('http')?   
+                                            <img  src={this.state.Ad.photo} alt='Imagen de anuncio' ></img> 
+                                            :
+                                            <img  src={'http://localhost:3001/'+this.state.Ad.photo} alt='Imagen de anuncio' ></img>
+                                            :
+                                            '' 
                                         }    
                                         
                                     </div>
@@ -214,8 +262,21 @@ this.setState({
                 <form
                     onSubmit={e=> {
                         e.preventDefault();
-                        this.guardarCambios();    
-                    // value.obtenerEventos(this.state)
+
+                
+                        this.setState({ loading: true });
+              
+                      
+                     if (this.state.create===true){
+                       
+                        this.guardarNuevo();
+                     }
+                     else {
+                        
+                        this.guardarCambios();  
+                     }
+                     
+
                     }}          
                 >
                             <div className="uk-margin" uk-margin="true" >
@@ -227,6 +288,7 @@ this.setState({
                                   
                                     value={this.state.name  }
                                     onChange={this.onValueChange}
+                                    required
                                 />
                             </div>
 
@@ -236,9 +298,10 @@ this.setState({
                                     name="description"
                                     className="uk-input"
                                     type="text"
-                                    placeholder="Ad name"
+                                    placeholder="Description"
                                     value={ this.state.description }
                                     onChange={this.onValueChange}
+                                    required
                                     
                                 />
                             </div>
@@ -251,7 +314,7 @@ this.setState({
                                     placeholder="Price"
                                     value={ this.state.price }
                                     onChange={this.onValueChange}
-                                    
+                                    required
                                 />
                             </div>
                             { this.state.create===true ?
@@ -262,7 +325,7 @@ this.setState({
                                     type="text"
                                     placeholder="url imagen"
                                     value={ this.state.photo }
-                                  
+                                   required
                                     onChange={this.onValueChange}
                                     
                                 />
@@ -275,6 +338,7 @@ this.setState({
                                 name="type"
                                 onChange={this.onValueChange}
                                 value={this.state.type}
+                                required
                                 >
                                     <option key={'Sell'} value="Sell" >Sell</option>
                                     <option key={'Buy'} value="Buy" >Buy</option>
@@ -301,12 +365,31 @@ this.setState({
                             }
 
                             </div>
+                            
+                            {/* {  this.state.loading===true ?
+                            <span uk-spinner="ratio: 3" className="loader-show"></span>
+                            :
+                            <span uk-spinner="ratio: 3" className="loader-hide"></span>
+                            }        */}
 
+                            <div className='sweet-loading'>
+                                    <ClipLoader
+                                    css={override}
+                                    sizeUnit={"px"}
+                                    size={150}
+                                    color={'#123abc'}
+                                    loading={this.state.loading}
+                                    />
+                                    
+                                </div> 
                             <div>
                                 <input type="submit" className="uk-button uk-button-danger"
-                                value="Guardar Cambios"/>
+                                value= {this.state.create===true ? 'Guardar':'Guardar Cambios'}       />
                             </div>
                             
+                            
+
+
               
                             
              </form>
@@ -319,7 +402,8 @@ this.setState({
                   
              </Fragment>
         );
-    }
+
+  }
 }
  
 export default CreateEdit;

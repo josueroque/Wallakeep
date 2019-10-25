@@ -68,3 +68,18 @@ export const  updateAd= async (ad) =>{
 }
 
 
+  export const  createAd= async (ad) =>{
+    
+    const requestUrl=API_URL+'apiv1/anuncios/';
+    console.log('desde api ');
+    console.log(ad);
+    console.log(requestUrl);
+
+    const response = await axios.post(requestUrl,ad);
+  // console.log('response'+response);
+  //  const data  = await response.data.result;
+  //  console.log('devuelvo '+data);
+  console.log(response);
+    return response;   
+
+}

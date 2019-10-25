@@ -95,6 +95,14 @@ text-align: justify;
        /* margin-left: -50vw; */
        
      }
+
+     .loader-hide{
+       display: none !important;
+     }
+     .loader-show{
+      display:block !important;
+     }
+
     .detail-section{
       
       grid-template-columns: 1fr 1fr;

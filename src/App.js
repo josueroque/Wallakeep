@@ -8,7 +8,7 @@ import UserProvider from './context/UserContext';
 import { withRouter } from 'react-router-dom';
 import Header from './Components/Header';
 import Navbar from './Components/Navbar';
-
+import ErrorBoundary from './Components/ErrorBoundary';
  
 class App  extends Component {
 
@@ -16,20 +16,19 @@ class App  extends Component {
   render() { 
     return (      
       <div className="text-center">
-        <UserProvider>
-        {/* <Header /> */}
-           <Router>
-            <Switch>
-              <Route exact path="/detail/:id" component={Detail}  />
-              <Route exact path='/Create-Edit/:id' component={CreateEdit}  />
-              <Route exact path='/Create-Edit' component={CreateEdit}  />
-              <Route exact path='/List' component={List} />
-              <Route exact path='/' component={Register}  />
-            </Switch>
-        </Router>
-        
-      </UserProvider>
-
+         <ErrorBoundary>
+            <UserProvider>
+              <Router>
+                <Switch>
+                  <Route exact path="/detail/:id" component={Detail}  />
+                  <Route exact path='/Create-Edit/:id' component={CreateEdit}  />
+                  <Route exact path='/Create-Edit' component={CreateEdit}  />
+                  <Route exact path='/List' component={List} />
+                  <Route exact path='/' component={Register}  />
+                </Switch>
+            </Router>
+          </UserProvider>
+      </ErrorBoundary>
     </div>
     );
   }

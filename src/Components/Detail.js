@@ -75,6 +75,15 @@ class Detail extends Component {
     }
 
     render() { 
+        let ruta='';
+        if (this.state.Ad.photo){
+             if (this.state.Ad.photo.includes('http')){
+               ruta=this.state.Ad.photo;
+          }
+         else{
+        ruta=`http://localhost:3001/`+this.state.Ad.photo
+            }
+    }
         console.log(this.state._id);
         return (  
             <Fragment>
@@ -85,8 +94,18 @@ class Detail extends Component {
          
                              <div className="detail-section">     
                                     <div className="image-container card-image">
-                                        <img  src={`http://localhost:3001/${this.state.Ad.photo}`} alt='Imagen de anuncio' >
-                                        </img>
+                                      { 
+                                        
+                                        this.state.Ad.photo ?
+                                        this.state.Ad.photo.includes('http')?   
+                                           <img  src={this.state.Ad.photo} alt='Imagen de anuncio' ></img> 
+                                           :
+                                           <img  src={'http://localhost:3001/'+this.state.Ad.photo} alt='Imagen de anuncio' ></img>
+                                           :
+                                           '' 
+                                       
+                                       
+                                      }  
                                     </div>
                                     <div className="content"> 
                                         <h3 className="text-center">{this.state.Ad.name}</h3>

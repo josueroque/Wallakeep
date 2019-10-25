@@ -202,7 +202,14 @@ class List extends Component {
                          
                         }}>  
                          <div className="card-image" >
-                            <img src={`http://localhost:3001/${Ad.photo}`} alt='Imagen de anuncio' style={style2} ></img>  
+                            {/* <img src={`http://localhost:3001/${Ad.photo}`} alt='Imagen de anuncio' style={style2} ></img>   */}
+                            {
+                                                                         Ad.photo.includes('http') ?
+                                                                         <img  src={Ad.photo} alt='Imagen de anuncio' ></img>  
+                                                                         :
+                                                                         <img  src={`http://localhost:3001/${Ad.photo}`} alt='Imagen de anuncio' ></img>  
+                             
+                            }
                         </div>   
                         
                         </Link>
