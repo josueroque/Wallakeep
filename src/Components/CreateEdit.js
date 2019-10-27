@@ -11,6 +11,20 @@ import { css } from '@emotion/core';
 class CreateEdit extends Component {
     constructor(props){
         super(props);
+
+        let createParent;
+        if (this.props.location.state){
+         if (this.props.location.state.createParent===true){
+             createParent=true;
+            console.log('viendo el prop desde el cons'+this.props.location.state.createParent)
+
+         }
+         else{
+             createParent=false;
+         }
+        }
+
+
     if (this.props.location.state){
     
         const { adId,pathname } = this.props.location.state;
@@ -28,7 +42,7 @@ class CreateEdit extends Component {
            price:'',
            type:'' ,
            photo:'',
-           create: false,
+           create:createParent===true ? true: false,
            loading:false,
            afterSave:false,
            afterSaveMessage:'Datos Guardados!!'
@@ -49,7 +63,7 @@ class CreateEdit extends Component {
                 price:'',
                 type:'',
                 photo:'',
-                create:false,
+                create:createParent===true ? true: false,
                 loading:false, 
                 afterSave:false,
                 afterSaveMessage:'Datos Guardados!!'   
@@ -83,7 +97,7 @@ class CreateEdit extends Component {
                 price:'',
                 type:'',
                 photo:'',
-                create:true,
+                create:createParent===true ? true: false,
                 loading:false,
                 afterSave:false,
                 afterSaveMessage:'Datos Guardados!!'    
@@ -163,6 +177,7 @@ guardarNuevo=async()=>{
     }
     //console.log(desde guardar)
     const response=await createAd(createdAd);
+    console.log(response);
     await this.wait(1000);
     this.setState({loading:false,afterSave:true});
     await this.wait(1000);
@@ -286,8 +301,8 @@ const override = css`
     border-color: red;
 `;
 
-console.log('desde render '+this.state.loading );
-console.log('viendo el prop');
+console.log('desde render '+this.state.loading + ' '+this.state.create );
+
 
 
 
@@ -296,7 +311,7 @@ let createParent;
 if (this.props.location.state){
  if (this.props.location.state.createParent===true){
      createParent=true;
-    console.log(this.props.location.state.createParent)
+    console.log('viendo el prop'+this.props.location.state.createParent)
  }
  else{
      createParent=false;
@@ -352,10 +367,12 @@ if (this.props.location.state){
                                         
                 <form
                     onSubmit={e=> {
+                            
                         e.preventDefault();
 
                         
                         this.setState({ loading: true });
+                        
                         if (this.props.location.state){
                             if (this.props.location.state.createParent===true){
                                 this.props.location.state.createParent=false;
@@ -376,7 +393,9 @@ if (this.props.location.state){
                      }
                      
 
-                    }}          
+                    }
+                    
+                }          
                 >           
                         {/* <div className="uk-column-1-2@m uk-margin"> */}
                             <div className="uk-margin" uk-margin="true" >
@@ -493,7 +512,7 @@ if (this.props.location.state){
                         {/* </div>                  */}
                         <div>
                                 <input type="submit" className="uk-button uk-button-danger"
-                                value= {this.state.create===true ? 'Guardar':'Guardar Cambios'}       />
+                                value= {this.state.create===true ?  'Guardar':'Guardar Cambios'}       />
                                 
                             </div>
              </form>
