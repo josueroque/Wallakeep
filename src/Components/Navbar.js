@@ -29,14 +29,14 @@ class Navbar extends Component {
                                   <div className="uk-navbar-item uk-logo">
 
                     <span className="uk-icon uk-margin-small-right" uk-icon="icon: file; ratio:2"></span>
-                    New
+                    Nuevo
                 </div>
             </Link>    
             </li>
             <li> 
             <Link to={ {pathname: `/`}} >  <div className="uk-navbar-item uk-logo">
                     <span className="uk-icon uk-margin-small-right" uk-icon="icon: lock; ratio:2"></span>
-                    Close 
+                    Salir
                 </div>
             </Link>    
             </li>
@@ -70,7 +70,7 @@ class Navbar extends Component {
 </nav>
 
         <div className="text-center" >
-            <label >User Name: {localStorage.getItem('name')+' '+ localStorage.getItem('surname')}</label>
+            <label >Usuario: {localStorage.getItem('name')+' '+ localStorage.getItem('surname')}</label>
         </div> 
 </Fragment>
 

@@ -43,7 +43,7 @@ class   Register extends Component {
               
             <Fragment>
                <br/> 
-               <h2 className="text-center"> Register Form</h2>
+               <h2 className="text-center"> Formulario de Registro</h2>
                 <div className="container">
                     <br/> 
                     <UserConsumer>
@@ -65,24 +65,25 @@ class   Register extends Component {
                     }}         
                     >
                         <div className="form-group">
-                            <label for="name">Name:</label>
+                            <label for="name">Nombre:</label>
                             <input
                                 type="text"
                                  className="form-control col-xs-2" 
                                  id="name" 
-                                 placeholder="Enter name" 
+                                 placeholder="Ingrese el nombre" 
                                  name="name"
                                 onChange={this.setUser1}
                                  required
                                  />
                         </div>
                         <div className="form-group">
-                            <label for="surname">Surname:</label>
+                            <label for="surname">Apellido:</label>
                             <input 
                                 type="text" 
                                 className="form-control col-xs-2" 
                                 name="surname"
                                 id="surname"
+                                placeholder="Ingrese el apellido" 
                                onChange={this.setUser1}
                                 required
                             />
@@ -95,7 +96,7 @@ class   Register extends Component {
                             id="tag"
                             class="custom-select browser-default" required
                         >
-                            <option value="" >--Select a tag--</option>
+                            <option value="" >--Selecione un tag--</option>
                             {
                                 this.state.tags.map(tag=>
                                   
@@ -108,7 +109,7 @@ class   Register extends Component {
                         </select>
                       
                         <br/>  <br/> <br/>
-                        <input type="submit"  className="uk-button uk-button-danger" value="Submit" ></input>
+                        <input type="submit"  className="uk-button uk-button-danger" value="Enviar" ></input>
                     </form>
                     )
                 }}

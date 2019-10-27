@@ -46,8 +46,19 @@ export const  getTags= async (name) =>{
     return data;   
 }
 
-export const  filterByTag= async (tag) =>{
+export const  filterByPrice= async (p1,p2) =>{
 
+  const requestUrl=API_URL+'apiv1/anuncios?price='+p1+'-'+p2;
+ // console.log(requestUrl);
+  const response = await axios.get(requestUrl);
+ //console.log(response);
+  const data  = await response.data.results;
+  //console.log('devuelvo '+data);
+  return data;   
+}
+
+export const  filterByTag= async (tag) =>{
+  console.log('desde api tag '+ tag);
     const requestUrl=API_URL+'apiv1/anuncios?tag='+tag;
    // console.log(requestUrl);
     const response = await axios.get(requestUrl);
@@ -58,22 +69,29 @@ export const  filterByTag= async (tag) =>{
 }
 
 export const  updateAd= async (ad) =>{
-    const requestUrl=API_URL+'apiv1/anuncios/'+ad.id;
+  try{ 
+  const requestUrl=API_URL+'apiv1/anuncios/'+ad.id;
   //  console.log('desde api '+requestUrl);
     const response = await axios.put(requestUrl,ad);
   // console.log('response'+response);
   //  const data  = await response.data.result;
   //  console.log('devuelvo '+data);
-    return response;   
+    return response;  
+   
+
+  } catch (error) {
+   
+    throw(error);
+  } 
 }
 
 
   export const  createAd= async (ad) =>{
     try {
       const requestUrl=API_URL+'apiv1/anuncios/';
-    console.log('desde api ');
+    console.log('desde api Save ');
     console.log(ad);
-    console.log(requestUrl);
+    //console.log(requestUrl);
 
     const response = await axios.post(requestUrl,ad);
   // console.log('response'+response);

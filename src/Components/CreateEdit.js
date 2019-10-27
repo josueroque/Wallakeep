@@ -15,9 +15,9 @@ class CreateEdit extends Component {
     
         const { adId,pathname } = this.props.location.state;
      //   const {createParent}=this.props.children;
-        console.log( 'desde start');
+     //   console.log( 'desde start');
  if (adId){
-       console.log('hola condicion1'+adId+pathname);
+     //  console.log('hola condicion1'+adId+pathname);
         this.state = { 
            _id:adId,
            Ad:[],
@@ -34,11 +34,11 @@ class CreateEdit extends Component {
            afterSaveMessage:'Datos Guardados!!'
          };
          this.getAdvert(adId);
-        console.log('hola condicion1'+adId+pathname);
+     //   console.log('hola condicion1'+adId+pathname);
          localStorage.setItem('_id',adId);
         }
         else{
-            console.log('hola condicion2'+adId+pathname);
+           // console.log('hola condicion2'+adId+pathname);
             this.state = { 
                 _id:'',
                 Ad:[],
@@ -88,7 +88,7 @@ class CreateEdit extends Component {
                 afterSave:false,
                 afterSaveMessage:'Datos Guardados!!'    
               };  
-              console.log('hola condicion3');
+             // console.log('hola condicion3');
         }
 
     this.getAllTags();
@@ -167,6 +167,8 @@ guardarNuevo=async()=>{
     this.setState({loading:false,afterSave:true});
     await this.wait(1000);
     this.setState({loading:false,afterSave:false});
+    await this.wait(1000);
+    this.props.history.push("/list");
  } catch (error) {
     await this.wait(1000); 
     this.setState({loading:false,afterSave:true,afterSaveMessage:'Ha sucedido un error!!'});
@@ -178,9 +180,9 @@ guardarNuevo=async()=>{
 
 
 onValueChange(e){
-     console.log('desde change');
-     console.log('name'+e.target.name);
-     console.log('value'+e.target.value);
+    //  console.log('desde change');
+    //  console.log('name'+e.target.name);
+    //  console.log('value'+e.target.value);
     if (this.props.location.state){
         if (this.props.location.state.createParent===true){
             this.props.location.state.createParent=false;
@@ -213,7 +215,7 @@ onValueChange(e){
         default:
             break;
     }
-    console.log(this.state.name+this.state.description+this.state.price+this.state.type);
+  //  console.log(this.state.name+this.state.description+this.state.price+this.state.type);
 }
 
 checkBoxChange(e){
@@ -309,6 +311,7 @@ if (this.props.location.state){
          
                              <div className="detail-section">     
                                     <div className="image-container card-image">
+                                        <h3>Previsualizacion de imagen</h3>
                                         {  this.state.create===true?  
                                         <img className="img-detail"  src={this.state.photo} alt='Imagen de anuncio' ></img>
                                          : 
@@ -319,8 +322,29 @@ if (this.props.location.state){
                                             <img   className="img-detail" src={createParent===true ?'':'http://localhost:3001/'+this.state.Ad.photo} alt='Imagen de anuncio' ></img>
                                             :
                                             '' 
-                                        }    
-                                        
+                                        } 
+                                {this.state.loading===true ? 
+                                    <h3 >Guardando...</h3>
+                                    :
+                                    ''
+                                }
+                                <div className='sweet-loading'>
+                                    <ClipLoader
+                                    css={override}
+                                    sizeUnit={"px"}
+                                    size={150}
+                                    color={'#123abc'}
+                                    loading={this.state.loading}
+                                    />
+
+                                   
+                                </div>    
+
+                                        {this.state.afterSave===true ? 
+                                        <h3 >{this.state.afterSaveMessage}</h3>
+                                        :
+                                        ''
+                                        }
                                     </div>
                                     <div className="content"> 
 
@@ -342,7 +366,9 @@ if (this.props.location.state){
                      if (this.state.create===true){
                        
                         this.guardarNuevo();
-                        
+                       // this.setState({create:false});
+                     //  this.setTimeout(this.props.history.push("/list"),5000)
+                       //this.props.history.push("/list");
                      }
                      else {
                         
@@ -351,8 +377,10 @@ if (this.props.location.state){
                      
 
                     }}          
-                >
+                >           
+                        {/* <div className="uk-column-1-2@m uk-margin"> */}
                             <div className="uk-margin" uk-margin="true" >
+                             <label for="name">Nombre</label>
                                 <input 
                                     name="name"
                                     className="uk-input"
@@ -367,6 +395,7 @@ if (this.props.location.state){
 
 
                             <div className="uk-margin" uk-margin="true" >
+                            <label for="description">Descripcion</label>
                                 <textarea 
                                     name="description"
                                     className="uk-input"
@@ -380,6 +409,7 @@ if (this.props.location.state){
                             </div>
 
                             <div className="uk-margin" uk-margin="true" >
+                            <label for="price">Precio</label>
                                 <input 
                                     name="price"
                                     className="uk-input"
@@ -393,6 +423,7 @@ if (this.props.location.state){
                             </div>
                             { this.state.create===true }
                             <div className="uk-margin" uk-margin="true" >
+                            <label for="Photo">URL de la foto</label>
                                 <input 
                                     name="photo"
                                     className="uk-input"
@@ -407,6 +438,7 @@ if (this.props.location.state){
                                 
                             
                             <div className="uk-margin" uk-margin="true" >
+                            <label for="type">Tipo transaccion</label>
                                 <select 
                                 className="uk-select"
                                 name="type"
@@ -420,8 +452,8 @@ if (this.props.location.state){
                             </div>
 
            
-
-                            <div className="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                            <label className="uk-text-left" for="name">Tags</label>
+                            <div  name="tags" id="tags" className="uk-margin uk-grid-small uk-child-width-auto uk-grid">
                             {
                                 this.state.tags.map(tag=>
                                     //  <label key={tag}><input key={tag} class="uk-checkbox" type="checkbox" id={tag} 
@@ -445,7 +477,7 @@ if (this.props.location.state){
                             :
                             <span uk-spinner="ratio: 3" className="loader-hide"></span>
                             }        */}
-                            {this.state.loading===true ? 
+                            {/* {this.state.loading===true ? 
                                 <h3 >Guardando...</h3>
                                 :
                                 ''
@@ -454,32 +486,23 @@ if (this.props.location.state){
                                 <h3 >{this.state.afterSaveMessage}</h3>
                                 :
                                 ''
-                            }
-                            <div className='sweet-loading'>
-                                    <ClipLoader
-                                    css={override}
-                                    sizeUnit={"px"}
-                                    size={150}
-                                    color={'#123abc'}
-                                    loading={this.state.loading}
-                                    />
+                            } */}
 
-                                   
-                                </div> 
-                            <div>
+
+                            
+                        {/* </div>                  */}
+                        <div>
                                 <input type="submit" className="uk-button uk-button-danger"
                                 value= {this.state.create===true ? 'Guardar':'Guardar Cambios'}       />
                                 
                             </div>
-                            
-                                         
-                            
              </form>
 
          
                                      
                                     </div>
-                              </div>      
+                              </div>
+                                    
                
                   
              </Fragment>

@@ -1,5 +1,5 @@
 import React,{Component,Fragment} from 'react';
-import { getAds,getAdName,getTags, filterByTag } from '../Api/Api';
+import { getAds,getAdName,getTags, filterByTag, filterByPrice } from '../Api/Api';
 import { Link } from "react-router-dom";
 import Header from './Header';
 import UserConsumer from '../context/UserContext';
@@ -14,17 +14,24 @@ class List extends Component {
             id:'',
             Adname:'',
             tag:localStorage.getItem('tag'),
-            tags:[]
+            tags:[],
+            price1:'',
+            price2:'',
+            numAds:0
 
          };
         this.getList();
         this.getAllTags();
        
+        this.onP1Change=this.onP1Change.bind(this);
+        this.onP2Change=this.onP2Change.bind(this);
+        this.onPriceChange=this.onPriceChange.bind(this);
+        this.onfilterChange=this.onfilterChange.bind(this);
         //console.log( this.props.location);
     }
 
     componentDidMount(){
-        console.log('desde CDM '+localStorage.getItem('surname'));
+       // console.log('desde CDM '+localStorage.getItem('surname'));
         this.filterTag(this.state.tag);
     }
     getAllTags=async()=>{
@@ -35,39 +42,77 @@ class List extends Component {
         });
     }
 
-    filterTag=async(e)=>{
+    filterTag=async(tag)=>{
         // this.setState({
         //     Adname:e.target.value
         // })
         let list=[];
-    //    console.log(e.target);
-    let defaultTag;
-    if (e.target===undefined){
-       defaultTag=e;
-    }    
-    else{
-        defaultTag=e.target.value;
-    }
-        
-        if (defaultTag!==''){
-            list=await filterByTag (defaultTag);
+// if (e.target) console.log('desde filterTag '+ e.target + e.target.name + e.target.name.value);
+//     let defaultTag;
+//     if (e.target===undefined){
+//        defaultTag=e;
+//     }    
+//     else{
+//         defaultTag=e.target.value;
+//     }
+console.log('desde filter '+tag) ;
+//         if (defaultTag!==''){
+        if(this.state.tag===''){
+            list=await getAds (); 
+        }
+        else {
+            list=await filterByTag (tag);
+        }
+            
             this.setState({
                 Adlist:list,
                 
             });
-            console.log('desde if' + list);
-        }
-        else{
-          this.getList ();
-          console.log('desde else' + this.state.Adlist);
-        }
+   
+            console.log(list);
+        // }
+        // else{
+        //   this.getList ();
+        //   console.log('desde else' + this.state.Adlist);
+        // }
   
 
-          console.log('hola');  
-          console.log(list);
+        //   console.log('hola');  
+        //   console.log(list);
        // console.log(this.state.Adname);
     }
+    onP1Change(e){
+        this.setState({price1:e.target.value})
+    }
+    onP2Change(e){
+        this.setState({price2:e.target.value})
+    }
+   
+    onPriceChange=async(p1,p2)=>{
+        let list=[];
+            list=await filterByPrice (this.state.price1,this.state.price2);
+            this.setState({
+                Adlist:list,
+                
+            });
+            //console.log('desde if' + list);
+        }
 
+   onfilterChange =async(e)=>{
+  
+       let {name, value} = e.target;
+       console.log(e.target);
+      this.setState({tag: value,});
+
+       await this.filterTag(value);
+   }
+
+//    onfilterChange= function (event) {
+//     this.setState({ title: event.target.value }, () => this.filterTag());
+//   },
+//   APICallFunction: function () {
+//     // Call API with the updated value
+//   }
 
     onNameChange=async(e)=>{
         // this.setState({
@@ -77,19 +122,20 @@ class List extends Component {
         if (e.target.value!==''){
             list=await getAdName (e.target.value);
             this.setState({
+
                 Adlist:list,
                 
             });
-            console.log('desde if' + list);
+           // console.log('desde if' + list);
         }
         else{
           this.getList ();
-          console.log('desde else' + this.state.Adlist);
+        //  console.log('desde else' + this.state.Adlist);
         }
   
 
-          console.log('hola');  
-          console.log(list);
+          //console.log('hola');  
+          //console.log(list);
        // console.log(this.state.Adname);
     }
 
@@ -109,9 +155,9 @@ class List extends Component {
 
     }
 
-    componentDidUpdate(){
-      //  console.log(this.state);
-    }
+    // componentDidUpdate(){
+    //   //  console.log(this.state);
+    // }
    
      render() { 
         let style1={
@@ -129,18 +175,19 @@ class List extends Component {
               onSubmit={e=> {
                 e.preventDefault();
                 localStorage.setItem('_id',undefined);
-                this.props.history.push("/Create-Edit");
+                this.onPriceChange(this.state.price1,this.state.price2);
+               // this.props.history.push("/Create-Edit");
                 
              // value.obtenerEventos(this.state)
             }}          
            >
                 <fieldset className="uk-fieldset uk-margin" >
                     <legend className="uk-legend uk-text-center">
-                        Lista de Anuncios
+                       Mostrando {this.state.Adlist.length} Anuncios
                     </legend> 
 
                 </fieldset>
-                <div className="uk-column-1-4@m uk-margin">
+                <div className="uk-column-1-5@m uk-margin">
                     <div className="uk-margin" uk-margin="true" >
                         <input 
                             name="name"
@@ -157,10 +204,12 @@ class List extends Component {
                         <select
                         className="uk-select"
                         name="tag"
-                        onChange={this.filterTag}
+                        id="tag"
+                        onClick={this.onfilterChange}
                         value={this.state.tag}
+                       defaultValue={ localStorage.getItem('tag')}
                         >
-                            <option value="" >--Select a tag--</option>
+                            <option value="" >--Todos los tags--</option>
                             {
                                 this.state.tags.map(tag=>
                                   
@@ -178,14 +227,24 @@ class List extends Component {
                             name="precio"
                             className="uk-input"
                             type="number"
-                            placeholder="Precio de Anuncio"
-                            onChange={this.filterTag}
+                            placeholder="Precio desde"
+                            onChange={this.onP1Change}
+                        />
+                    </div>
+
+                    <div className="uk-margin" uk-margin="true" >
+                        <input 
+                            name="precio2"
+                            className="uk-input"
+                            type="number"
+                            placeholder="Precio hasta"
+                            onChange={this.onP2Change}
                         />
                     </div>
 
                     <div>
                         <input type="submit" className="uk-button uk-button-danger"
-                        value="Create new ad"/>
+                        value="Filtrar por precio"/>
                     </div>
                     
                 </div>
@@ -213,10 +272,10 @@ class List extends Component {
                          <div className="card-image" >
                             {/* <img src={`http://localhost:3001/${Ad.photo}`} alt='Imagen de anuncio' style={style2} ></img>   */}
                             {
-                                                                         Ad.photo.includes('http') ?
-                                                                         <img  src={Ad.photo} alt='Imagen de anuncio' ></img>  
-                                                                         :
-                                                                         <img  src={`http://localhost:3001/${Ad.photo}`} alt='Imagen de anuncio' ></img>  
+                                Ad.photo.includes('http') ?
+                                <img  src={Ad.photo} alt='Imagen de anuncio' ></img>  
+                                :
+                                <img  src={`http://localhost:3001/${Ad.photo}`} alt='Imagen de anuncio' ></img>  
                              
                             }
                             <div className="card-image">
