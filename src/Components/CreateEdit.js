@@ -14,6 +14,8 @@ class CreateEdit extends Component {
     if (this.props.location.state){
     
         const { adId,pathname } = this.props.location.state;
+     //   const {createParent}=this.props.children;
+        console.log( 'desde start');
  if (adId){
        console.log('hola condicion1'+adId+pathname);
         this.state = { 
@@ -26,8 +28,10 @@ class CreateEdit extends Component {
            price:'',
            type:'' ,
            photo:'',
-           create:false,
-           loading:false
+           create: false,
+           loading:false,
+           afterSave:false,
+           afterSaveMessage:'Datos Guardados!!'
          };
          this.getAdvert(adId);
         console.log('hola condicion1'+adId+pathname);
@@ -46,7 +50,9 @@ class CreateEdit extends Component {
                 type:'',
                 photo:'',
                 create:false,
-                loading:false    
+                loading:false, 
+                afterSave:false,
+                afterSaveMessage:'Datos Guardados!!'   
               };  
         }
     }
@@ -78,7 +84,9 @@ class CreateEdit extends Component {
                 type:'',
                 photo:'',
                 create:true,
-                loading:false    
+                loading:false,
+                afterSave:false,
+                afterSaveMessage:'Datos Guardados!!'    
               };  
               console.log('hola condicion3');
         }
@@ -95,10 +103,27 @@ componentDidMount(){
     // if (this.state.create===true){
         
             this.setState({ state: this.state });
-         //  this.setState({loading:false});  
-console.log('seteado '+this.state.loading);
+            if (this.props.location.state){
+                if (this.props.location.state.createParent===true){
+                    this.props.location.state.createParent=false;
+                    
+                }
+            }
+       //   this.setState({loading:false});  
+
+
 //    }
 }
+
+
+componentWillUnmount(){
+    if (this.props.location.state){
+        if( this.props.location.state.createParent===true){
+            this.setState({create:true})    
+        }
+    }
+}
+
  wait=async(ms)=> {
     return new Promise(resolve => {
       setTimeout(resolve, ms);
@@ -115,31 +140,60 @@ guardarCambios=async()=>{
     }
 //    const response=setTimeout( await updateAd(editedAd),5000);
     const response= await updateAd(editedAd);
-    await this.wait(500);
-    this.setState({loading:false});
+    await this.wait(1000);
+    this.setState({loading:false,afterSave:true});
+    await this.wait(1000);
+    this.setState({loading:false,afterSave:false});
+
+
   //  console.log(response);
 }
 
 guardarNuevo=async()=>{
  //this.setState({loading:true});
+ try {
     let createdAd={
         name:this.state.name,
         description:this.state.description,
-        type:this.state.type.toLowerCase(),
+        type:this.state.type!==''? this.state.type.toLowerCase():'sell',
         price:this.state.price,
         tags:this.state.selectedTags,
-         photo:this.state.photo
+         photo:this.state.photo,
+         selectedTags:[]
     }
+    //console.log(desde guardar)
     const response=await createAd(createdAd);
-    await this.wait(500);
-    this.setState({loading:false});
+    await this.wait(1000);
+    this.setState({loading:false,afterSave:true});
+    await this.wait(1000);
+    this.setState({loading:false,afterSave:false});
+ } catch (error) {
+    await this.wait(1000); 
+    this.setState({loading:false,afterSave:true,afterSaveMessage:'Ha sucedido un error!!'});
+    await this.wait(1000);
+    this.setState({loading:false,afterSave:false,afterSaveMessage:'Datos guardados!!'}); 
+ }
+
 }
 
 
 onValueChange(e){
-    // console.log('desde change');
-    // console.log('name'+e.target.name);
-    // console.log('value'+e.target.value);
+     console.log('desde change');
+     console.log('name'+e.target.name);
+     console.log('value'+e.target.value);
+    if (this.props.location.state){
+        if (this.props.location.state.createParent===true){
+            this.props.location.state.createParent=false;
+            this.setState({create:true,           
+                
+               selectedTags:[],
+                name:'',
+                description:'',
+                price:'',
+                type:'' ,
+                photo:'',})
+        }
+    }
     switch (e.target.name){
         case 'name':
             this.setState({name:e.target.value});
@@ -187,9 +241,7 @@ this.setState({
     checkTag(){
         this.work.current.checked();
     }
-// componentDidMount(){
-//     this.work.current.checked();
-// }
+
 
     getAllTags=async()=>{
         const allTags=await getTags();
@@ -233,23 +285,38 @@ const override = css`
 `;
 
 console.log('desde render '+this.state.loading );
+console.log('viendo el prop');
+
+
+
+//console.log(this.props.location.state.createParent);
+let createParent;
+if (this.props.location.state){
+ if (this.props.location.state.createParent===true){
+     createParent=true;
+    console.log(this.props.location.state.createParent)
+ }
+ else{
+     createParent=false;
+ }
+}
 
         return (  
             <Fragment>
-            <Navbar />
+            <Navbar></Navbar> 
 
                 
          
                              <div className="detail-section">     
                                     <div className="image-container card-image">
-                                        {  this.state.create===true ?
-                                        <img  src={this.state.photo} alt='Imagen de anuncio' ></img>
+                                        {  this.state.create===true?  
+                                        <img className="img-detail"  src={this.state.photo} alt='Imagen de anuncio' ></img>
                                          : 
                                          this.state.Ad.photo ?
                                          this.state.Ad.photo.includes('http')?   
-                                            <img  src={this.state.Ad.photo} alt='Imagen de anuncio' ></img> 
+                                            <img className="img-detail"  src={createParent===true ?'':this.state.Ad.photo} alt='Imagen de anuncio' ></img> 
                                             :
-                                            <img  src={'http://localhost:3001/'+this.state.Ad.photo} alt='Imagen de anuncio' ></img>
+                                            <img   className="img-detail" src={createParent===true ?'':'http://localhost:3001/'+this.state.Ad.photo} alt='Imagen de anuncio' ></img>
                                             :
                                             '' 
                                         }    
@@ -263,13 +330,19 @@ console.log('desde render '+this.state.loading );
                     onSubmit={e=> {
                         e.preventDefault();
 
-                
+                        
                         this.setState({ loading: true });
-              
+                        if (this.props.location.state){
+                            if (this.props.location.state.createParent===true){
+                                this.props.location.state.createParent=false;
+                                this.setState({create:true})
+                            }
+                        }
                       
                      if (this.state.create===true){
                        
                         this.guardarNuevo();
+                        
                      }
                      else {
                         
@@ -285,8 +358,8 @@ console.log('desde render '+this.state.loading );
                                     className="uk-input"
                                     type="text"
                                     placeholder="Nombre de Anuncio"
-                                  
-                                    value={this.state.name  }
+                                     
+                                    value={ createParent===true  ?'':this.state.name  }
                                     onChange={this.onValueChange}
                                     required
                                 />
@@ -299,7 +372,7 @@ console.log('desde render '+this.state.loading );
                                     className="uk-input"
                                     type="text"
                                     placeholder="Description"
-                                    value={ this.state.description }
+                                    value={ createParent===true ?'':this.state.description }
                                     onChange={this.onValueChange}
                                     required
                                     
@@ -310,38 +383,39 @@ console.log('desde render '+this.state.loading );
                                 <input 
                                     name="price"
                                     className="uk-input"
-                                    type="numeric"
-                                    placeholder="Price"
-                                    value={ this.state.price }
+                                    
+                                    placeholder="Precio de Articulo"
+                                     type="numeric"
+                                    value={ createParent===true  ?'':this.state.price  }
                                     onChange={this.onValueChange}
                                     required
                                 />
                             </div>
-                            { this.state.create===true ?
+                            { this.state.create===true }
                             <div className="uk-margin" uk-margin="true" >
                                 <input 
                                     name="photo"
                                     className="uk-input"
                                     type="text"
                                     placeholder="url imagen"
-                                    value={ this.state.photo }
+                                    value={ createParent===true ?'': this.state.photo }
                                    required
                                     onChange={this.onValueChange}
                                     
                                 />
-                            </div> :''
-                                }
+                            </div> 
+                                
                             
                             <div className="uk-margin" uk-margin="true" >
                                 <select 
                                 className="uk-select"
                                 name="type"
                                 onChange={this.onValueChange}
-                                value={this.state.type}
+                                value={createParent===true ?'sell':this.state.type}
                                 required
                                 >
-                                    <option key={'Sell'} value="Sell" >Sell</option>
-                                    <option key={'Buy'} value="Buy" >Buy</option>
+                                    <option key={'Sell'} value="sell" >Sell</option>
+                                    <option key={'Buy'} value="buy" >Buy</option>
                                 </select>
                             </div>
 
@@ -355,7 +429,7 @@ console.log('desde render '+this.state.loading );
                                     //  onChange={this.checkBoxChange} value={tag}
                                     //  />{tag}</label>
                                     <label key={tag}><input key={tag} className="uk-checkbox" type="checkbox" id={tag} 
-                                    checked={this.state.selectedTags.includes(tag) ? true : false}
+                                   checked={this.state.selectedTags.includes(tag)&&createParent===false ? true : false}
                                     onChange={this.checkBoxChange} value={tag}
                                     />{tag}</label>
                                
@@ -371,7 +445,16 @@ console.log('desde render '+this.state.loading );
                             :
                             <span uk-spinner="ratio: 3" className="loader-hide"></span>
                             }        */}
-
+                            {this.state.loading===true ? 
+                                <h3 >Guardando...</h3>
+                                :
+                                ''
+                            }
+                            {this.state.afterSave===true ? 
+                                <h3 >{this.state.afterSaveMessage}</h3>
+                                :
+                                ''
+                            }
                             <div className='sweet-loading'>
                                     <ClipLoader
                                     css={override}
@@ -380,17 +463,16 @@ console.log('desde render '+this.state.loading );
                                     color={'#123abc'}
                                     loading={this.state.loading}
                                     />
-                                    
+
+                                   
                                 </div> 
                             <div>
                                 <input type="submit" className="uk-button uk-button-danger"
                                 value= {this.state.create===true ? 'Guardar':'Guardar Cambios'}       />
+                                
                             </div>
                             
-                            
-
-
-              
+                                         
                             
              </form>
 

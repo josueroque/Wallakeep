@@ -93,14 +93,14 @@ class Detail extends Component {
                 
          
                              <div className="detail-section">     
-                                    <div className="image-container card-image">
+                                    <div className="card-image">
                                       { 
                                         
                                         this.state.Ad.photo ?
                                         this.state.Ad.photo.includes('http')?   
-                                           <img  src={this.state.Ad.photo} alt='Imagen de anuncio' ></img> 
+                                           <img className="img-detail" src={this.state.Ad.photo} alt='Imagen de anuncio' ></img> 
                                            :
-                                           <img  src={'http://localhost:3001/'+this.state.Ad.photo} alt='Imagen de anuncio' ></img>
+                                           <img className="img-detail" src={'http://localhost:3001/'+this.state.Ad.photo} alt='Imagen de anuncio' ></img>
                                            :
                                            '' 
                                        
@@ -111,6 +111,7 @@ class Detail extends Component {
                                         <h3 className="text-center">{this.state.Ad.name}</h3>
                                         <p>{this.state.Ad.description}</p>
                                         <p>{'Precio: $ '+this.state.Ad.price}</p>
+                                        <p>{'Tipo: '+this.state.Ad.type}</p>
                                      
                                         
                                         <Link   to={{

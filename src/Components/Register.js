@@ -31,9 +31,7 @@ class   Register extends Component {
             [e.target.name]:e.target.value
         })
 
-        localStorage.setItem('name',this.state.name);
-        localStorage.setItem('surname',this.state.surname);
-        localStorage.setItem('tag',this.state.tag);
+
 
 
         
@@ -57,6 +55,10 @@ class   Register extends Component {
                         e.preventDefault();
                       //  console.log(e.target.value);
                      //   console.log(e);
+                     console.log(this.state);
+                     localStorage.setItem('name',this.state.name);
+                     localStorage.setItem('surname',this.state.surname);
+                     localStorage.setItem('tag',this.state.tag);
                      value.setUser(this.state);
                      this.props.history.push("/list");
                     // console.log('desde context' + value.name);
@@ -70,7 +72,7 @@ class   Register extends Component {
                                  id="name" 
                                  placeholder="Enter name" 
                                  name="name"
-                                 onChange={this.setUser1}
+                                onChange={this.setUser1}
                                  required
                                  />
                         </div>
@@ -81,15 +83,16 @@ class   Register extends Component {
                                 className="form-control col-xs-2" 
                                 name="surname"
                                 id="surname"
-                                onChange={this.setUser1}
+                               onChange={this.setUser1}
                                 required
                             />
                         </div>
                         <label for="tags">Tag:</label>
                         <select 
                             className="form-control col-xs-2"
-                            onChange={this.setUser1}
+                          onChange={this.setUser1}
                             name="tag"
+                            id="tag"
                             class="custom-select browser-default" required
                         >
                             <option value="" >--Select a tag--</option>

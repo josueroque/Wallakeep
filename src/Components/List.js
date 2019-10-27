@@ -13,7 +13,7 @@ class List extends Component {
             Adlist:[],
             id:'',
             Adname:'',
-            tag:'',
+            tag:localStorage.getItem('tag'),
             tags:[]
 
          };
@@ -21,6 +21,11 @@ class List extends Component {
         this.getAllTags();
        
         //console.log( this.props.location);
+    }
+
+    componentDidMount(){
+        console.log('desde CDM '+localStorage.getItem('surname'));
+        this.filterTag(this.state.tag);
     }
     getAllTags=async()=>{
         const allTags=await getTags();
@@ -35,9 +40,17 @@ class List extends Component {
         //     Adname:e.target.value
         // })
         let list=[];
-        console.log(e.target);
-        if (e.target.value!==''){
-            list=await filterByTag (e.target.value);
+    //    console.log(e.target);
+    let defaultTag;
+    if (e.target===undefined){
+       defaultTag=e;
+    }    
+    else{
+        defaultTag=e.target.value;
+    }
+        
+        if (defaultTag!==''){
+            list=await filterByTag (defaultTag);
             this.setState({
                 Adlist:list,
                 
@@ -111,13 +124,7 @@ class List extends Component {
 
         return (
       <Fragment> 
-      
-       {/* <Form /> */}
-            {/* <div>
-
-            <input type="text" placeholder="nombre anuncio"/>
-            </div>    */}
-                   <Navbar />
+            <Navbar />
               <form
               onSubmit={e=> {
                 e.preventDefault();
@@ -151,6 +158,7 @@ class List extends Component {
                         className="uk-select"
                         name="tag"
                         onChange={this.filterTag}
+                        value={this.state.tag}
                         >
                             <option value="" >--Select a tag--</option>
                             {
@@ -183,12 +191,13 @@ class List extends Component {
                 </div>
                     
             </form>
-            <div className="row ">
+            <div className="row">
                
                     {this.state.Adlist.map(Ad =>
                       <div key={Ad._id} className="col-md-3 col-sm-6">
                          <UserConsumer>
-                         <div className="card" style={style1}>
+                         <div className="card" >
+                         {/* <div className="card" style={style1}> */}
                          
                               {/* <input onClick={this.seeDetail} type="image" style={style3} src={`http://localhost:3001/${Ad.photo}`} alt='Imagen de anuncio' >
                                   
@@ -210,14 +219,19 @@ class List extends Component {
                                                                          <img  src={`http://localhost:3001/${Ad.photo}`} alt='Imagen de anuncio' ></img>  
                              
                             }
+                            <div className="card-image">
+                              <p > Articulo:{Ad.name} </p> 
+                              <p className="uk-icon uk-margin-small-right" uk-icon="icon: credit-card; ratio:1">Precio:{Ad.price} </p> 
+                              <p className="">Tags:{ Ad.tags.join(', ')} </p> 
+                            </div>  
                         </div>   
-                        
+                      
                         </Link>
                            
                          
                          </div> 
                  
-                         <p className="uk-legend uk-text-center">{Ad.name +' $'+Ad.price+ ' '+ Ad.tags} </p> 
+                         
                          {/* <input type="submit" className="uk-button uk-button-danger"
                                         value="Editar"/>   */}
                     </UserConsumer>

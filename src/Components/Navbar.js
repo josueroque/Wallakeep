@@ -19,7 +19,7 @@ class Navbar extends Component {
         </Link>
 
         <ul className="uk-navbar-nav">
-            {/* <li>
+            <li>
              <Link to={ {pathname: `/Create-Edit`,
                             state:{  
                                adId:undefined,
@@ -32,7 +32,7 @@ class Navbar extends Component {
                     New
                 </div>
             </Link>    
-            </li> */}
+            </li>
             <li> 
             <Link to={ {pathname: `/`}} >  <div className="uk-navbar-item uk-logo">
                     <span className="uk-icon uk-margin-small-right" uk-icon="icon: lock; ratio:2"></span>
@@ -69,7 +69,7 @@ class Navbar extends Component {
                     </form> */}
 </nav>
 
-        <div classNameName="text-left" >
+        <div className="text-center" >
             <label >User Name: {localStorage.getItem('name')+' '+ localStorage.getItem('surname')}</label>
         </div> 
 </Fragment>
