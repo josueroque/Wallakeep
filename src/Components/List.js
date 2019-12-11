@@ -1,181 +1,52 @@
-import React,{Component,Fragment} from 'react';
-import { getAds,getAdName,getTags, filterByTag, filterByPrice } from '../Api/Api';
+import React,{Fragment,useEffect,useState} from 'react';
+//import { getAds,getAdName,getTags, filterByTag, filterByPrice } from '../Api/Api';
 import { Link } from "react-router-dom";
-import Header from './Header';
 import UserConsumer from '../context/UserContext';
 import Navbar from './Navbar';
+import {getAdsAction,filterPriceAction,filterNameAction,filterTagAction} from '../actions/adsActions';
+import {getTagsAction,} from '../actions/tagsActions';
+import {useDispatch,useSelector,ReactReduxContext} from 'react-redux';
 //import Form from './Form';
 
-class List extends Component {
-    constructor(props){
-        super(props);
-        this.state = { 
-            Adlist:[],
-            id:'',
-            Adname:'',
-            tag:localStorage.getItem('tag'),
-            tags:[],
-            price1:'',
-            price2:'',
-            numAds:0
+const List =()=>  {
+  //  let tag=localStorage.getItem('tag');
+    const[price1,onP1Change]=useState('');
+    const[price2,onP2Change]=useState('');
+    const[tag,onTagChange]=useState(localStorage.getItem('tag'));
+//    const[name,onNameChange]=useState('');
 
-         };
-        this.getList();
-        this.getAllTags();
-       
-        this.onP1Change=this.onP1Change.bind(this);
-        this.onP2Change=this.onP2Change.bind(this);
-        this.onPriceChange=this.onPriceChange.bind(this);
-        this.onfilterChange=this.onfilterChange.bind(this);
-        //console.log( this.props.location);
-    }
+    const dispatch=useDispatch();
 
-    componentDidMount(){
-       // console.log('desde CDM '+localStorage.getItem('surname'));
-        this.filterTag(this.state.tag);
-    }
-    getAllTags=async()=>{
-        const allTags=await getTags();
-    //    console.log('obtengo'+allTags);
-        this.setState({
-            tags:allTags
-        });
-    }
+    // const [tags, getAllTags] = useState('');
 
-    filterTag=async(tag)=>{
-        // this.setState({
-        //     Adname:e.target.value
-        // })
-        let list=[];
-// if (e.target) console.log('desde filterTag '+ e.target + e.target.name + e.target.name.value);
-//     let defaultTag;
-//     if (e.target===undefined){
-//        defaultTag=e;
-//     }    
-//     else{
-//         defaultTag=e.target.value;
-//     }
-console.log('desde filter '+tag) ;
-//         if (defaultTag!==''){
-        if(this.state.tag===''){
-            list=await getAds (); 
-        }
-        else {
-            list=await filterByTag (tag);
-        }
-            
-            this.setState({
-                Adlist:list,
-                
-            });
-   
-            console.log(list);
-        // }
-        // else{
-        //   this.getList ();
-        //   console.log('desde else' + this.state.Adlist);
-        // }
+    useEffect( () => {
+        // Productos cuando el componente este listo
+        const loadAds = () => dispatch( getAdsAction() ) ;
+        loadAds();
+        const loadTags = () => dispatch( getTagsAction() ) ;
+        loadTags();
+    }, []);
+
+    const loading = useSelector(state => state.ads.loading);
+    const error = useSelector( state => state.ads.error);
+    const ads = useSelector( state => state.ads.ads );
+    const tags = useSelector( state => state.tags.tags );
+    const filterByPrice=(price1,price2) =>dispatch(filterPriceAction(price1,price2));
+    const filterByName=(name) =>dispatch(filterNameAction(name));
+    const filterByTag=(tag) =>dispatch(filterTagAction(tag));
   
-
-        //   console.log('hola');  
-        //   console.log(list);
-       // console.log(this.state.Adname);
-    }
-    onP1Change(e){
-        this.setState({price1:e.target.value})
-    }
-    onP2Change(e){
-        this.setState({price2:e.target.value})
-    }
-   
-    onPriceChange=async(p1,p2)=>{
-        let list=[];
-            list=await filterByPrice (this.state.price1,this.state.price2);
-            this.setState({
-                Adlist:list,
-                
-            });
-            //console.log('desde if' + list);
-        }
-
-   onfilterChange =async(e)=>{
-  
-       let {name, value} = e.target;
-       console.log(e.target);
-      this.setState({tag: value,});
-
-       await this.filterTag(value);
-   }
-
-//    onfilterChange= function (event) {
-//     this.setState({ title: event.target.value }, () => this.filterTag());
-//   },
-//   APICallFunction: function () {
-//     // Call API with the updated value
-//   }
-
-    onNameChange=async(e)=>{
-        // this.setState({
-        //     Adname:e.target.value
-        // })
-        let list=[];
-        if (e.target.value!==''){
-            list=await getAdName (e.target.value);
-            this.setState({
-
-                Adlist:list,
-                
-            });
-           // console.log('desde if' + list);
-        }
-        else{
-          this.getList ();
-        //  console.log('desde else' + this.state.Adlist);
-        }
-  
-
-          //console.log('hola');  
-          //console.log(list);
-       // console.log(this.state.Adname);
-    }
-
-    getList=async()=>{
-    const list=await getAds();
-    this.setState({
-        Adlist:list,
-        
-    });
-   
-    }
- //   console.log('hola'+list[0]);
- 
-    seeDetail=(e)=>{
-        //e.preventDefault();
-      //  this.props.history.push("/"+);
-
-    }
-
-    // componentDidUpdate(){
-    //   //  console.log(this.state);
-    // }
-   
-     render() { 
-        let style1={
-         height:'20vw'
-        }
-        let style2={
-         height:'20vw'
-        }
 
 
         return (
-      <Fragment> 
+        <Fragment>    
             <Navbar />
-              <form
+            <form
               onSubmit={e=> {
                 e.preventDefault();
                 localStorage.setItem('_id',undefined);
-                this.onPriceChange(this.state.price1,this.state.price2);
+               console.log(price1);
+               filterByPrice({price1,price2});
+       //         this.onPriceChange(this.state.price1,this.state.price2);
                // this.props.history.push("/Create-Edit");
                 
              // value.obtenerEventos(this.state)
@@ -183,7 +54,7 @@ console.log('desde filter '+tag) ;
            >
                 <fieldset className="uk-fieldset uk-margin" >
                     <legend className="uk-legend uk-text-center">
-                       Mostrando {this.state.Adlist.length} Anuncios
+                       Mostrando {ads.length} Anuncios
                     </legend> 
 
                 </fieldset>
@@ -194,7 +65,7 @@ console.log('desde filter '+tag) ;
                             className="uk-input"
                             type="text"
                             placeholder="Nombre de Anuncio"
-                            onChange={this.onNameChange}
+                            onChange={e=>filterByName(e.target.value)}
                         />
                     </div>
 
@@ -205,13 +76,14 @@ console.log('desde filter '+tag) ;
                         className="uk-select"
                         name="tag"
                         id="tag"
-                        onClick={this.onfilterChange}
-                        value={this.state.tag}
+                        onClick={e=>filterByTag(e.target.value)}
+                        onChange={e=>onTagChange(e.target.value)}
+                        value={tag}
                        defaultValue={ localStorage.getItem('tag')}
                         >
                             <option value="" >--Todos los tags--</option>
                             {
-                                this.state.tags.map(tag=>
+                                tags.map(tag=>
                                   
                                         <option key={tag}  value={tag} >{tag}</option>
                                  
@@ -228,7 +100,7 @@ console.log('desde filter '+tag) ;
                             className="uk-input"
                             type="number"
                             placeholder="Precio desde"
-                            onChange={this.onP1Change}
+                            onChange={e=>onP1Change(e.target.value)}
                         />
                     </div>
 
@@ -238,7 +110,7 @@ console.log('desde filter '+tag) ;
                             className="uk-input"
                             type="number"
                             placeholder="Precio hasta"
-                            onChange={this.onP2Change}
+                            onChange={e=>onP2Change(e.target.value)}
                         />
                     </div>
 
@@ -250,17 +122,14 @@ console.log('desde filter '+tag) ;
                 </div>
                     
             </form>
+
             <div className="row">
                
-                    {this.state.Adlist.map(Ad =>
+                    {ads.map(Ad =>
                       <div key={Ad._id} className="col-md-3 col-sm-6">
                          <UserConsumer>
                          <div className="card" >
-                         {/* <div className="card" style={style1}> */}
-                         
-                              {/* <input onClick={this.seeDetail} type="image" style={style3} src={`http://localhost:3001/${Ad.photo}`} alt='Imagen de anuncio' >
-                                  
-                              </input> */}
+
                              <Link   to={{
                            pathname: `/detail/${Ad._id}` , 
                            state:{  
@@ -299,10 +168,11 @@ console.log('desde filter '+tag) ;
 
            </div>
                             
-        </Fragment>      
-         );
+        </Fragment>    
+    
+        );
     }
-}
+                        
 
 
 

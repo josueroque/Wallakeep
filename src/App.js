@@ -9,6 +9,8 @@ import { withRouter } from 'react-router-dom';
 import Header from './Components/Header';
 import Navbar from './Components/Navbar';
 import ErrorBoundary from './Components/ErrorBoundary';
+import { Provider } from 'react-redux';
+import store from './store';
  
 class App  extends Component {
 
@@ -19,6 +21,7 @@ class App  extends Component {
          <ErrorBoundary>
             <UserProvider>
               <Router>
+              <Provider store={store}>
                 <Switch>
                   <Route exact path="/detail/:id" component={Detail}  />
                   <Route exact path='/Create-Edit/:id' component={CreateEdit}  />
@@ -26,6 +29,7 @@ class App  extends Component {
                   <Route exact path='/List' component={List} />
                   <Route exact path='/' component={Register}  />
                 </Switch>
+                </Provider>
             </Router>
           </UserProvider>
       </ErrorBoundary>
