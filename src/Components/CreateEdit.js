@@ -1,322 +1,241 @@
-import React,{Component,Fragment} from 'react';
+import React,{Fragment,useEffect,useState} from 'react';
 import { getAd,updateAd,createAd } from '../Api/Api';
 import Header from './Header';
 import UserConsumer from '../context/UserContext';
 import { Link } from "react-router-dom";
-import{getTags} from '../Api/Api';
 import Navbar from './Navbar';
+import {getAdsAction,getAdAction,saveAdAction} from '../actions/adsActions';
+import {getTagsAction,} from '../actions/tagsActions';
+import {useDispatch,useSelector,ReactReduxContext} from 'react-redux';
 import { ClipLoader } from 'react-spinners';
 import { css } from '@emotion/core';
+import { isUserWhitespacable } from '@babel/types';
 //import { Link } from "react-router-dom";
-class CreateEdit extends Component {
-    constructor(props){
-        super(props);
+const CreateEdit = (props) => {
+    let createParent;
 
-        let createParent;
-        if (this.props.location.state){
-         if (this.props.location.state.createParent===true){
+        if (props.location.state){
+         if (props.location.state.createParent===true){
              createParent=true;
-            console.log('viendo el prop desde el cons'+this.props.location.state.createParent)
+             
 
          }
          else{
+            localStorage.setItem('_id',props.match.params.id);
              createParent=false;
          }
         }
+       // console.log('desde inicio' + createParent);
+        const dispatch=useDispatch();
 
-
-    if (this.props.location.state){
-    
-        const { adId,pathname } = this.props.location.state;
-     //   const {createParent}=this.props.children;
-     //   console.log( 'desde start');
- if (adId){
-     //  console.log('hola condicion1'+adId+pathname);
-        this.state = { 
-           _id:adId,
-           Ad:[],
-           tags:[],
-           selectedTags:[],
-           name:'',
-           description:'',
-           price:'',
-           type:'' ,
-           photo:'',
-           create:createParent===true ? true: false,
-           loading:false,
-           afterSave:false,
-           afterSaveMessage:'Datos Guardados!!'
-         };
-         this.getAdvert(adId);
-     //   console.log('hola condicion1'+adId+pathname);
-         localStorage.setItem('_id',adId);
-        }
-        else{
-           // console.log('hola condicion2'+adId+pathname);
-            this.state = { 
-                _id:'',
-                Ad:[],
-                tags:[],
-                selectedTags:[],
-                name:'',
-                description:'',
-                price:'',
-                type:'',
-                photo:'',
-                create:createParent===true ? true: false,
-                loading:false, 
-                afterSave:false,
-                afterSaveMessage:'Datos Guardados!!'   
-              };  
-        }
-    }
-        // else if(localStorage.getItem('_id')===undefined ){   
-        // const id= localStorage.getItem('_id');
-        //     this.state = { 
-        //         _id:id,
-        //         Ad:[],
-        //         tags:[],
-        //         selectedTags:[],
-        //         name:'',
-        //         description:'',
-        //         price:'',
-        //         type:'',
-        //         create:false    
-        //       }; 
-        //   this.getAdvert(id);
-
-        // }
-        else{
-            this.state = { 
-                _id:'',
-                Ad:[],
-                tags:[],
-                selectedTags:[],
-                name:'',
-                description:'',
-                price:'',
-                type:'',
-                photo:'',
-                create:createParent===true ? true: false,
-                loading:false,
-                afterSave:false,
-                afterSaveMessage:'Datos Guardados!!'    
-              };  
-             // console.log('hola condicion3');
-        }
-
-    this.getAllTags();
-
-    this.checkBoxChange=this.checkBoxChange.bind(this);    
-    this.onValueChange=this.onValueChange.bind(this);  
-    this.guardarCambios=this.guardarCambios.bind(this);  
-    }
-
-componentDidMount(){
-//console.log('desde CDM' +this.state.create);
-    // if (this.state.create===true){
-        
-            this.setState({ state: this.state });
-            if (this.props.location.state){
-                if (this.props.location.state.createParent===true){
-                    this.props.location.state.createParent=false;
-                    
-                }
+        const  [create,updateCreate]=useState(createParent===true ? true: false);
+        useEffect( () => {
+            const loadAds = () => dispatch(getAdsAction()) ;
+            loadAds();
+            const loadTags = () => dispatch( getTagsAction() ) ;
+            loadTags();
+            if (createParent===true){
+                updateCreate(true);
             }
-       //   this.setState({loading:false});  
+            console.log('create desde efecto: ' +create +' '+ createParent);
+        }, []);
 
-
-//    }
-}
-
-
-componentWillUnmount(){
-    if (this.props.location.state){
-        if( this.props.location.state.createParent===true){
-            this.setState({create:true})    
-        }
-    }
-}
-
- wait=async(ms)=> {
-    return new Promise(resolve => {
-      setTimeout(resolve, ms);
-    });
-  }
-guardarCambios=async()=>{
-    let editedAd={
-        name:this.state.name,
-        description:this.state.description,
-        type:this.state.type.toLowerCase(),
-        price:this.state.price,
-        tags:this.state.selectedTags,
-        id:this.state._id
-    }
-//    const response=setTimeout( await updateAd(editedAd),5000);
-    const response= await updateAd(editedAd);
-    await this.wait(1000);
-    this.setState({loading:false,afterSave:true});
-    await this.wait(1000);
-    this.setState({loading:false,afterSave:false});
-
-
-  //  console.log(response);
-}
-
-guardarNuevo=async()=>{
- //this.setState({loading:true});
- try {
-    let createdAd={
-        name:this.state.name,
-        description:this.state.description,
-        type:this.state.type!==''? this.state.type.toLowerCase():'sell',
-        price:this.state.price,
-        tags:this.state.selectedTags,
-         photo:this.state.photo,
-         selectedTags:[]
-    }
-    //console.log(desde guardar)
-    const response=await createAd(createdAd);
-    console.log(response);
-    await this.wait(1000);
-    this.setState({loading:false,afterSave:true});
-    await this.wait(1000);
-    this.setState({loading:false,afterSave:false});
-    await this.wait(1000);
-    this.props.history.push("/list");
- } catch (error) {
-    await this.wait(1000); 
-    this.setState({loading:false,afterSave:true,afterSaveMessage:'Ha sucedido un error!!'});
-    await this.wait(1000);
-    this.setState({loading:false,afterSave:false,afterSaveMessage:'Datos guardados!!'}); 
- }
-
-}
-
-
-onValueChange(e){
-    //  console.log('desde change');
-    //  console.log('name'+e.target.name);
-    //  console.log('value'+e.target.value);
-    if (this.props.location.state){
-        if (this.props.location.state.createParent===true){
-            this.props.location.state.createParent=false;
-            this.setState({create:true,           
-                
-               selectedTags:[],
-                name:'',
-                description:'',
-                price:'',
-                type:'' ,
-                photo:'',})
-        }
-    }
-    switch (e.target.name){
-        case 'name':
-            this.setState({name:e.target.value});
-            break;
-        case 'description':
-            this.setState({description:e.target.value});
-            break;
-        case 'price':
-            this.setState({price:e.target.value});
-            break;
-        case 'type':
-            this.setState({type:e.target.value});
-            break; 
-        case 'photo':
-            this.setState({photo:e.target.value});
-            break;                              
-        default:
-            break;
-    }
-  //  console.log(this.state.name+this.state.description+this.state.price+this.state.type);
-}
-
-checkBoxChange(e){
-// console.log(e.target.value);
-// console.log(this.state.selectedTags);
-let tagsArray=this.state.selectedTags;
-if(tagsArray.includes(e.target.value)){
-
-    let element=tagsArray.indexOf(e.target.value);
-    tagsArray.splice(element,1);
-    // tagsArray.splice
-    // tagsArray.pop(e.target.value);
-}
-else{
-    tagsArray.push(e.target.value);
-
-}
-this.setState({
-    selectedTags:tagsArray
-})
-// console.log(this.state.selectedTags);
-
-}
-
-    checkTag(){
-        this.work.current.checked();
-    }
-
-
-    getAllTags=async()=>{
-        const allTags=await getTags();
-    //    console.log('obtengo'+allTags);
-        this.setState({
-            tags:allTags,
+            const ads=useSelector(state=>state.ads.ads);
+         //   console.log(props.match.params.id);
+            const ad=ads.find(a=>a._id===props.match.params.id);
+            const  _id=useState(createParent===true ? '':props.match.params.id);
+            const [  Ad]=useState(createParent===true ?  []:ad);
+            const [tags] =useState (useSelector( state => state.tags.tags ));
             
-        });
+            const [  selectedTags,onTagsChange]=useState(createParent===true ?[]:Ad.tags);
+            const [  name,onNameChange]=useState(createParent===true ?'':Ad.name);
+            const [  description,onDescriptionChange]=useState(createParent===true ?'':Ad.description);
+            const [  price,onPriceChange]=useState(createParent===true ?'':Ad.price);
+            const [  type,onTypeChange]=useState(createParent===true ?'sell':Ad.type);
+            const [  photo,onPhotoChange]=useState(createParent===true ?[]:Ad.photo);
+            // const [  mobile,onMobileChange]=useState(createParent===true ?[]:Ad.photo);
+            // const [  work,onWorkChange]=useState(createParent===true ?[]:Ad.photo);
+            // const [  lifestyle,onPhotoChange]=useState(createParent===true ?[]:Ad.photo);
+            // const [  motor,onPhotoChange]=useState(createParent===true ?[]:Ad.photo);
+
+            const [loading,updateLoading]=useState(false); 
+            const  [ afterSave,updateAfterSave]=useState(false);
+           const [  afterSaveMessage,updateAfterSaveMessage]=useState('Datos Guardados!!') ;
+
+            const saveAd=(tag) =>dispatch(saveAdAction(ad));
+
+            useEffect(()=>{
+                console.log('si se dispara');
+                if (create===true){
+                    onNameChange('');
+                    onPhotoChange('');
+                    onPriceChange('');
+                    onTypeChange('');
+                    // onTagsChange({
+                    //     selectedTags:[]
+                    // })
+                    onDescriptionChange('');    
+                }
+            },[create])
+            // const checkMobile=React.createRef();
+            // const checkLifestyle=React.createRef();
+            // const checkMotor=React.createRef();
+            // const checkWork=React.createRef();
+            let arreglo=new Array;
+            const tagsChanged=(e)=>{
+
+                let tagsArray;
+                if (selectedTags.selectedTags){
+                    tagsArray  =selectedTags.selectedTags;    
+                }
+                else{
+                    tagsArray=selectedTags;
+                 }
+           //     console.log('tagsArray desde evento');
+             //   console.log(tagsArray);
+                if(tagsArray.includes(e.target.value)){
+                
+                    let element=tagsArray.indexOf(e.target.value);
+                    tagsArray.splice(element,1);
+                    // tagsArray.splice
+                    // tagsArray.pop(e.target.value);
+                }
+                else{
+                    tagsArray.push(e.target.value);
+                
+                }
+
+
+                onTagsChange({
+                    selectedTags:tagsArray
+                })
+
+                // onTagsChange({
+                //     ...selectedTags,
+                //     [e.target.name]:e.target.value
+                // })
+
+
+                 return selectedTags;
+            }
+
+
+    if (props.location.state){
+    
+        const { adId,pathname } = props.location.state;
     }
-
-
-    editAdvert=(e)=>{
-        e.preventDefault();
-
-    }
-
-    getAdvert=async(id)=>{
-        const Advert=await getAd(id);
-        this.setState({
-            Ad:Advert,
-            selectedTags:[...Advert.tags],
-            name:Advert.name,
-            description:Advert.description,
-            price:Advert.price,
-            type:Advert.type, 
-            photo:Advert.photo
-        });
-
-
-    }
-
-    render() { 
-
-
-
-
-const override = css`
+    const override = css`
     display: block;
     margin: 0 auto;
     border-color: red;
 `;
 
-console.log('desde render '+this.state.loading + ' '+this.state.create );
+let selected=new Array;
+if(selectedTags.selectedTags===undefined){
+        selected=selectedTags;
+    }else
+    {
+        selected=  selectedTags.selectedTags;  
+    }
+//Guardar
+const wait=async(ms)=> {
+    return new Promise(resolve => {
+      setTimeout(resolve, ms);
+    });
+  }
+
+const guardarCambios=async()=>{
 
 
+    try { 
+        updateLoading(true);   
+        console.log(_id);
+    let editedAd={
+        name:name,
+        description:description,
+        type:type.toLowerCase(),
+        price:price,
+        tags:selected,
+        id:_id[0]
+    }
+ //   console.log(editedAd);
+//    const response=setTimeout( await updateAd(editedAd),5000);
+    const response= await updateAd(editedAd);
+    await wait(1000);
+    updateLoading(false);
+    updateAfterSave(true);
+    await wait(1000);
+    updateLoading(false);
+    updateAfterSave(false);
+    console.log(response);
+    }
 
-
-//console.log(this.props.location.state.createParent);
-let createParent;
-if (this.props.location.state){
- if (this.props.location.state.createParent===true){
-     createParent=true;
-    console.log('viendo el prop'+this.props.location.state.createParent)
- }
- else{
-     createParent=false;
+catch (error) {
+    console.log(error);
+    await wait(1000); 
+    updateLoading(false);
+    updateAfterSave(true);
+    updateAfterSaveMessage('Ha sucedido un error!!');
+    await wait(1000);
+    updateLoading(false);
+    updateAfterSave(false);
+    updateAfterSaveMessage('Datos guardados!!'); 
  }
 }
+
+const guardarNuevo=async()=>{
+    console.log('desde guardar');
+ try {
+    updateLoading(true);
+    console.log(type);
+    let createdAd={
+        name:name,
+        description:description,
+        type:type.toLowerCase(),
+        price:price,
+        tags:selected,
+        photo:photo
+    }
+    
+    console.log(createdAd);
+    const response=await createAd(createdAd);
+    console.log(response);
+    await wait(1000);
+    updateLoading(false);
+    updateAfterSave(true);
+    await wait(1000);
+    updateLoading(false);
+    updateAfterSave(false);
+    await wait(1000);
+    props.history.push("/list");
+ } catch (error) {
+    await wait(1000); 
+    updateLoading(false);
+    updateAfterSave(true);
+    updateAfterSaveMessage('Ha sucedido un error!!');
+    console.log(error);
+    await wait(1000);
+    updateLoading(false);
+    updateAfterSave(false);
+    updateAfterSaveMessage('Datos guardados!!'); 
+ }
+
+}
+
+//Guardar
+
+
+// const actualizarState=(e)=>{
+//     onTagsChange({
+//       ...selectedTags,
+//       [e.target.name]:e.target.value
+//     })
+//   }
+
+
+
+console.log('antes de return');
+console.log('create: ' +create +' '+ createParent);
 
         return (  
             <Fragment>
@@ -327,18 +246,18 @@ if (this.props.location.state){
                              <div className="detail-section">     
                                     <div className="image-container card-image">
                                         <h3>Previsualizacion de imagen</h3>
-                                        {  this.state.create===true?  
-                                        <img className="img-detail"  src={this.state.photo} alt='Imagen de anuncio' ></img>
+                                        {  createParent===true?  
+                                        <img className="img-detail"  src={photo} alt='Imagen de anuncio' ></img>
                                          : 
-                                         this.state.Ad.photo ?
-                                         this.state.Ad.photo.includes('http')?   
-                                            <img className="img-detail"  src={createParent===true ?'':this.state.Ad.photo} alt='Imagen de anuncio' ></img> 
+                                         Ad.photo ?
+                                         Ad.photo.includes('http')?   
+                                            <img className="img-detail"  src={createParent===true ?'':Ad.photo} alt='Imagen de anuncio' ></img> 
                                             :
-                                            <img   className="img-detail" src={createParent===true ?'':'http://localhost:3001/'+this.state.Ad.photo} alt='Imagen de anuncio' ></img>
+                                            <img   className="img-detail" src={createParent===true ?'':'http://localhost:3001/'+ Ad.photo} alt='Imagen de anuncio' ></img>
                                             :
                                             '' 
                                         } 
-                                {this.state.loading===true ? 
+                                {loading===true ? 
                                     <h3 >Guardando...</h3>
                                     :
                                     ''
@@ -349,14 +268,14 @@ if (this.props.location.state){
                                     sizeUnit={"px"}
                                     size={150}
                                     color={'#123abc'}
-                                    loading={this.state.loading}
+                                    loading={loading}
                                     />
 
                                    
                                 </div>    
 
-                                        {this.state.afterSave===true ? 
-                                        <h3 >{this.state.afterSaveMessage}</h3>
+                                        {afterSave===true ? 
+                                        <h3 >{afterSaveMessage}</h3>
                                         :
                                         ''
                                         }
@@ -371,25 +290,25 @@ if (this.props.location.state){
                         e.preventDefault();
 
                         
-                        this.setState({ loading: true });
+                       // this.setState({ loading: true });
+                       updateLoading(true);
                         
-                        if (this.props.location.state){
-                            if (this.props.location.state.createParent===true){
-                                this.props.location.state.createParent=false;
-                                this.setState({create:true})
+                        if (props.location.state){
+                            if (props.location.state.createParent===true){
+                                props.location.state.createParent=false;
+                                updateCreate(true);
                             }
                         }
                       
-                     if (this.state.create===true){
+                     if (createParent===true){
                        
-                        this.guardarNuevo();
-                       // this.setState({create:false});
-                     //  this.setTimeout(this.props.history.push("/list"),5000)
-                       //this.props.history.push("/list");
+                     guardarNuevo();
+                        console.log('guarda');
                      }
                      else {
                         
-                        this.guardarCambios();  
+                      guardarCambios(); 
+                      console.log('edita'); 
                      }
                      
 
@@ -406,8 +325,8 @@ if (this.props.location.state){
                                     type="text"
                                     placeholder="Nombre de Anuncio"
                                      
-                                    value={ createParent===true  ?'':this.state.name  }
-                                    onChange={this.onValueChange}
+                                    value={ name  }
+                                   onChange={e=>onNameChange(e.target.value)}
                                     required
                                 />
                             </div>
@@ -420,8 +339,8 @@ if (this.props.location.state){
                                     className="uk-input"
                                     type="text"
                                     placeholder="Description"
-                                    value={ createParent===true ?'':this.state.description }
-                                    onChange={this.onValueChange}
+                                    value={ description }
+                                    onChange={e=>onDescriptionChange(e.target.value)}
                                     required
                                     
                                 />
@@ -435,12 +354,12 @@ if (this.props.location.state){
                                     
                                     placeholder="Precio de Articulo"
                                      type="numeric"
-                                    value={ createParent===true  ?'':this.state.price  }
-                                    onChange={this.onValueChange}
+                                    value={ price  }
+                                    onChange={e=>onPriceChange(e.target.value)}
                                     required
                                 />
                             </div>
-                            { this.state.create===true }
+                            { createParent===true }
                             <div className="uk-margin" uk-margin="true" >
                             <label for="Photo">URL de la foto</label>
                                 <input 
@@ -448,9 +367,9 @@ if (this.props.location.state){
                                     className="uk-input"
                                     type="text"
                                     placeholder="url imagen"
-                                    value={ createParent===true ?'': this.state.photo }
+                                    value={ photo }
                                    required
-                                    onChange={this.onValueChange}
+                                    onChange={e=>onPhotoChange(e.target.value)}
                                     
                                 />
                             </div> 
@@ -461,8 +380,8 @@ if (this.props.location.state){
                                 <select 
                                 className="uk-select"
                                 name="type"
-                                onChange={this.onValueChange}
-                                value={createParent===true ?'sell':this.state.type}
+                               onChange={e=>onTypeChange(e.target.value)}
+                                value={createParent===true ?'sell':type}
                                 required
                                 >
                                     <option key={'Sell'} value="sell" >Sell</option>
@@ -474,14 +393,14 @@ if (this.props.location.state){
                             <label className="uk-text-left" for="name">Tags</label>
                             <div  name="tags" id="tags" className="uk-margin uk-grid-small uk-child-width-auto uk-grid">
                             {
-                                this.state.tags.map(tag=>
-                                    //  <label key={tag}><input key={tag} class="uk-checkbox" type="checkbox" id={tag} 
-                                    //  checked={this.state.Ad.tags.includes(tag) ? true : false}
-                                    //  onChange={this.checkBoxChange} value={tag}
-                                    //  />{tag}</label>
+                                tags.map(tag=>
+
                                     <label key={tag}><input key={tag} className="uk-checkbox" type="checkbox" id={tag} 
-                                   checked={this.state.selectedTags.includes(tag)&&createParent===false ? true : false}
-                                    onChange={this.checkBoxChange} value={tag}
+                                   checked={selected.includes(tag)  ? true :false}
+                                    onChange={tagsChanged} 
+                                  // onClick={tagsChanged}
+                                    value={tag} 
+                                    //ref={'check'+tag}
                                     />{tag}</label>
                                
                                 
@@ -491,28 +410,9 @@ if (this.props.location.state){
 
                             </div>
                             
-                            {/* {  this.state.loading===true ?
-                            <span uk-spinner="ratio: 3" className="loader-show"></span>
-                            :
-                            <span uk-spinner="ratio: 3" className="loader-hide"></span>
-                            }        */}
-                            {/* {this.state.loading===true ? 
-                                <h3 >Guardando...</h3>
-                                :
-                                ''
-                            }
-                            {this.state.afterSave===true ? 
-                                <h3 >{this.state.afterSaveMessage}</h3>
-                                :
-                                ''
-                            } */}
-
-
-                            
-                        {/* </div>                  */}
-                        <div>
+                            <div>
                                 <input type="submit" className="uk-button uk-button-danger"
-                                value= {this.state.create===true ?  'Guardar':'Guardar Cambios'}       />
+                                value= {createParent===true ?  'Guardar':'Guardar Cambios'}       />
                                 
                             </div>
              </form>
@@ -526,8 +426,7 @@ if (this.props.location.state){
                   
              </Fragment>
         );
-
   }
-}
+
  
 export default CreateEdit;

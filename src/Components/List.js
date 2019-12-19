@@ -21,7 +21,7 @@ const List =()=>  {
 
     useEffect( () => {
         // Productos cuando el componente este listo
-        const loadAds = () => dispatch( getAdsAction() ) ;
+        const loadAds = () => dispatch(filterTagAction(tag) ) ;
         loadAds();
         const loadTags = () => dispatch( getTagsAction() ) ;
         loadTags();
@@ -34,6 +34,7 @@ const List =()=>  {
     const filterByPrice=(price1,price2) =>dispatch(filterPriceAction(price1,price2));
     const filterByName=(name) =>dispatch(filterNameAction(name));
     const filterByTag=(tag) =>dispatch(filterTagAction(tag));
+    
   
 
 
@@ -46,10 +47,7 @@ const List =()=>  {
                 localStorage.setItem('_id',undefined);
                console.log(price1);
                filterByPrice({price1,price2});
-       //         this.onPriceChange(this.state.price1,this.state.price2);
-               // this.props.history.push("/Create-Edit");
-                
-             // value.obtenerEventos(this.state)
+
             }}          
            >
                 <fieldset className="uk-fieldset uk-margin" >

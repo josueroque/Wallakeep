@@ -70,10 +70,12 @@ export const  filterByTag= async (tag) =>{
 
 export const  updateAd= async (ad) =>{
   try{ 
+  
   const requestUrl=API_URL+'apiv1/anuncios/'+ad.id;
-  //  console.log('desde api '+requestUrl);
+    console.log('desde api '+ad.id);
+    //console.log(ad);
     const response = await axios.put(requestUrl,ad);
-  // console.log('response'+response);
+   console.log('response'+response);
   //  const data  = await response.data.result;
   //  console.log('devuelvo '+data);
     return response;  
