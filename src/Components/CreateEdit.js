@@ -1,16 +1,13 @@
 import React,{Fragment,useEffect,useState} from 'react';
-import { getAd,updateAd,createAd } from '../Api/Api';
-import Header from './Header';
-import UserConsumer from '../context/UserContext';
+// import UserConsumer from '../context/UserContext';
 import { Link } from "react-router-dom";
 import Navbar from './Navbar';
-import {getAdsAction,getAdAction,saveAdAction} from '../actions/adsActions';
+import {getAdsAction,getAdAction,saveAdAction,updateAdAction} from '../actions/adsActions';
 import {getTagsAction,} from '../actions/tagsActions';
 import {useDispatch,useSelector,ReactReduxContext} from 'react-redux';
 import { ClipLoader } from 'react-spinners';
 import { css } from '@emotion/core';
 import { isUserWhitespacable } from '@babel/types';
-//import { Link } from "react-router-dom";
 const CreateEdit = (props) => {
     let createParent;
 
@@ -24,63 +21,115 @@ const CreateEdit = (props) => {
             localStorage.setItem('_id',props.match.params.id);
              createParent=false;
          }
+
+        } else{
+            if (localStorage.getItem('new')) {
+                createParent=localStorage.getItem('new');
+            }
         }
-       // console.log('desde inicio' + createParent);
+              
+        localStorage.setItem('new',createParent);
+
         const dispatch=useDispatch();
 
-        const  [create,updateCreate]=useState(createParent===true ? true: false);
         useEffect( () => {
             const loadAds = () => dispatch(getAdsAction()) ;
             loadAds();
             const loadTags = () => dispatch( getTagsAction() ) ;
             loadTags();
-            if (createParent===true){
-                updateCreate(true);
+
+            if (tags.length!==0){
+                localStorage.setItem('tags',tags);  
             }
-            console.log('create desde efecto: ' +create +' '+ createParent);
+
         }, []);
 
             const ads=useSelector(state=>state.ads.ads);
-         //   console.log(props.match.params.id);
-            const ad=ads.find(a=>a._id===props.match.params.id);
-            const  _id=useState(createParent===true ? '':props.match.params.id);
-            const [  Ad]=useState(createParent===true ?  []:ad);
-            const [tags] =useState (useSelector( state => state.tags.tags ));
-            
-            const [  selectedTags,onTagsChange]=useState(createParent===true ?[]:Ad.tags);
-            const [  name,onNameChange]=useState(createParent===true ?'':Ad.name);
+
+           let id;
+           if (props.location.state ){
+               id=props.location.state.adId;
+           }
+           else if(props.match.params.id ){
+               id=props.match.params.id;
+           }
+        
+           const ad=ads.find(a=>a._id===id);
+           const  _id=useState(createParent===true ? '':id);
+           const [  Ad,updateAd]=useState(createParent===true || (ad===undefined)  ? []:ad);
+  
+            useEffect(()=>{
+                
+              if (Ad.length===0 && createParent!==true){
+
+                    if (ad){
+                  
+                        updateAd(ad);
+
+                       // onTagsChange(Ad.tags) 
+                    }  
+                }
+
+             },)
+
+            const [tags,updateTags] =useState (useSelector( state => state.tags.tags ));
+            const [  selectedTags,onTagsChange]=useState(createParent===true ?[]:(Ad.tags===undefined) ?[]:Ad.tags) ;
+            const [  name,onNameChange]=useState(createParent===true  ?'':Ad.name);
             const [  description,onDescriptionChange]=useState(createParent===true ?'':Ad.description);
-            const [  price,onPriceChange]=useState(createParent===true ?'':Ad.price);
+            const [  price,onPriceChange]=useState(createParent===true  ?'':Ad.price);
             const [  type,onTypeChange]=useState(createParent===true ?'sell':Ad.type);
             const [  photo,onPhotoChange]=useState(createParent===true ?[]:Ad.photo);
-            // const [  mobile,onMobileChange]=useState(createParent===true ?[]:Ad.photo);
-            // const [  work,onWorkChange]=useState(createParent===true ?[]:Ad.photo);
-            // const [  lifestyle,onPhotoChange]=useState(createParent===true ?[]:Ad.photo);
-            // const [  motor,onPhotoChange]=useState(createParent===true ?[]:Ad.photo);
-
             const [loading,updateLoading]=useState(false); 
             const  [ afterSave,updateAfterSave]=useState(false);
            const [  afterSaveMessage,updateAfterSaveMessage]=useState('Datos Guardados!!') ;
+          
 
-            const saveAd=(tag) =>dispatch(saveAdAction(ad));
+          useEffect(()=>{
+            const loadTags = () => dispatch( getTagsAction() ) ;
+            loadTags();
+            
+                 if (Ad.tags){
 
-            useEffect(()=>{
-                console.log('si se dispara');
-                if (create===true){
-                    onNameChange('');
-                    onPhotoChange('');
-                    onPriceChange('');
-                    onTypeChange('');
-                    // onTagsChange({
-                    //     selectedTags:[]
-                    // })
-                    onDescriptionChange('');    
-                }
-            },[create])
-            // const checkMobile=React.createRef();
-            // const checkLifestyle=React.createRef();
-            // const checkMotor=React.createRef();
-            // const checkWork=React.createRef();
+         if(createParent!==true){
+                    if (tags.length===0){
+
+                        let arrayTag=new Array;
+                        arrayTag=localStorage.getItem('tags').split(',');
+
+                        updateTags(arrayTag);
+                    }
+                    onTagsChange({
+                        selectedTags:Ad.tags
+                    })
+                 };
+                 onNameChange(Ad.name);
+                 onPhotoChange(Ad.photo);
+                 onPriceChange(Ad.price);
+                 onTypeChange(Ad.type);
+
+                 onDescriptionChange(Ad.description); 
+         }     
+    
+              
+           },[Ad])
+
+           useEffect(()=>{
+            if (props.match.params.id ===undefined && createParent===true){
+                
+                 onNameChange('');
+                 onPhotoChange('');
+                 onPriceChange('');
+                 onTypeChange('');
+                 onDescriptionChange(''); 
+
+          
+              }
+           },[createParent])
+
+           
+            const saveAd=(ad) =>dispatch(saveAdAction(ad));
+            const editAd=(ad) =>dispatch(updateAdAction(ad));
+          
             let arreglo=new Array;
             const tagsChanged=(e)=>{
 
@@ -91,14 +140,12 @@ const CreateEdit = (props) => {
                 else{
                     tagsArray=selectedTags;
                  }
-           //     console.log('tagsArray desde evento');
-             //   console.log(tagsArray);
+
                 if(tagsArray.includes(e.target.value)){
                 
                     let element=tagsArray.indexOf(e.target.value);
                     tagsArray.splice(element,1);
-                    // tagsArray.splice
-                    // tagsArray.pop(e.target.value);
+
                 }
                 else{
                     tagsArray.push(e.target.value);
@@ -109,12 +156,6 @@ const CreateEdit = (props) => {
                 onTagsChange({
                     selectedTags:tagsArray
                 })
-
-                // onTagsChange({
-                //     ...selectedTags,
-                //     [e.target.name]:e.target.value
-                // })
-
 
                  return selectedTags;
             }
@@ -144,12 +185,12 @@ const wait=async(ms)=> {
     });
   }
 
-const guardarCambios=async()=>{
+const saveChanges=async()=>{
 
 
     try { 
         updateLoading(true);   
-        console.log(_id);
+      //  console.log(_id);
     let editedAd={
         name:name,
         description:description,
@@ -158,16 +199,17 @@ const guardarCambios=async()=>{
         tags:selected,
         id:_id[0]
     }
- //   console.log(editedAd);
-//    const response=setTimeout( await updateAd(editedAd),5000);
-    const response= await updateAd(editedAd);
+  console.log('desde update');  
+  console.log(editedAd);
+      editAd(editedAd)
+
     await wait(1000);
     updateLoading(false);
     updateAfterSave(true);
     await wait(1000);
     updateLoading(false);
     updateAfterSave(false);
-    console.log(response);
+  //  console.log(response);
     }
 
 catch (error) {
@@ -183,23 +225,26 @@ catch (error) {
  }
 }
 
-const guardarNuevo=async()=>{
-    console.log('desde guardar');
+const saveNew=async()=>{
+
  try {
     updateLoading(true);
-    console.log(type);
+  console.log(type);
+  let newType;
+  if (type===''){
+      newType='sell';
+  }
     let createdAd={
         name:name,
         description:description,
-        type:type.toLowerCase(),
+        type:newType.toLowerCase(),
         price:price,
         tags:selected,
         photo:photo
     }
-    
-    console.log(createdAd);
-    const response=await createAd(createdAd);
-    console.log(response);
+
+    const response= saveAd(createdAd);
+    //console.log(response);
     await wait(1000);
     updateLoading(false);
     updateAfterSave(true);
@@ -222,27 +267,10 @@ const guardarNuevo=async()=>{
 
 }
 
-//Guardar
-
-
-// const actualizarState=(e)=>{
-//     onTagsChange({
-//       ...selectedTags,
-//       [e.target.name]:e.target.value
-//     })
-//   }
-
-
-
-console.log('antes de return');
-console.log('create: ' +create +' '+ createParent);
-
         return (  
             <Fragment>
             <Navbar></Navbar> 
-
-                
-         
+        
                              <div className="detail-section">     
                                     <div className="image-container card-image">
                                         <h3>Previsualizacion de imagen</h3>
@@ -270,7 +298,6 @@ console.log('create: ' +create +' '+ createParent);
                                     color={'#123abc'}
                                     loading={loading}
                                     />
-
                                    
                                 </div>    
 
@@ -281,38 +308,24 @@ console.log('create: ' +create +' '+ createParent);
                                         }
                                     </div>
                                     <div className="content"> 
-
-                                     
                                         
                 <form
                     onSubmit={e=> {
                             
                         e.preventDefault();
-
-                        
-                       // this.setState({ loading: true });
-                       updateLoading(true);
-                        
-                        if (props.location.state){
-                            if (props.location.state.createParent===true){
-                                props.location.state.createParent=false;
-                                updateCreate(true);
-                            }
-                        }
-                      
+                        updateLoading(true);
+                       
                      if (createParent===true){
                        
-                     guardarNuevo();
+                     saveNew();
                         console.log('guarda');
                      }
                      else {
                         
-                      guardarCambios(); 
+                      saveChanges(); 
                       console.log('edita'); 
                      }
-                     
-
-                    }
+                  }
                     
                 }          
                 >           
@@ -330,7 +343,6 @@ console.log('create: ' +create +' '+ createParent);
                                     required
                                 />
                             </div>
-
 
                             <div className="uk-margin" uk-margin="true" >
                             <label for="description">Descripcion</label>
@@ -359,6 +371,7 @@ console.log('create: ' +create +' '+ createParent);
                                     required
                                 />
                             </div>
+
                             { createParent===true }
                             <div className="uk-margin" uk-margin="true" >
                             <label for="Photo">URL de la foto</label>
@@ -381,7 +394,7 @@ console.log('create: ' +create +' '+ createParent);
                                 className="uk-select"
                                 name="type"
                                onChange={e=>onTypeChange(e.target.value)}
-                                value={createParent===true ?'sell':type}
+                                value={type}
                                 required
                                 >
                                     <option key={'Sell'} value="sell" >Sell</option>
@@ -402,9 +415,7 @@ console.log('create: ' +create +' '+ createParent);
                                     value={tag} 
                                     //ref={'check'+tag}
                                     />{tag}</label>
-                               
-                                
-                                 
+    
                                 )
                             }
 
@@ -427,6 +438,5 @@ console.log('create: ' +create +' '+ createParent);
              </Fragment>
         );
   }
-
  
 export default CreateEdit;

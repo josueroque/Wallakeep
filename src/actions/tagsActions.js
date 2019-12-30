@@ -22,9 +22,9 @@ import{
               const requestUrl=API_URL+'apiv1/tags';
               
                const response = await axios.get(requestUrl);
-              console.log(response);
+          //    console.log(response);
                let data  = await response.data.results;
-               console.log('devuelvo '+data);
+        //       console.log('devuelvo '+data);
                dispatch(getTagsSuccess(data));
                  
            } catch (error) {

@@ -36,13 +36,14 @@ export  function  getAdAction  (id) {
 
  export  function  saveAdAction  (ad) {
     return async (dispatch)=>{
-         dispatch(startGetAds());
+         dispatch(startSaveAd());
          try {
             const requestUrl=API_URL+'apiv1/anuncios/';
-            
+            console.log('desde action '+requestUrl);
+            console.log(ad);
             const response = await axios.post(requestUrl,ad);
-           
-            dispatch(getAdsSuccess(ad));
+            console.log(response); 
+            dispatch(saveAdSuccess(ad));
                
          } catch (error) {
              console.log(error);
@@ -50,7 +51,27 @@ export  function  getAdAction  (id) {
          }
      }
  }
- 
+
+ export function  updateAdAction (ad){
+    return  async(dispatch)=>{
+    try{
+        dispatch(startSaveAd());
+
+        const requestUrl=API_URL+'apiv1/anuncios/'+ad.id;
+        console.log('desde action '+requestUrl);
+        console.log(ad);
+        const response=await axios.put(requestUrl,ad)
+        console.log(response);
+        dispatch(saveAdSuccess(ad));
+                 
+    }
+    catch (error) {
+        console.log(error);
+        dispatch(saveAdFailure());
+        throw(error);
+    } 
+  }
+}
 
 export  function  getAdsAction  (ads) {
    return async (dispatch)=>{

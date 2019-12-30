@@ -37,7 +37,7 @@ class Detail extends Component {
               }; 
 
      //this.getDerivedStateFromProps();    
-     console.log(this.state)     
+   //  console.log(this.state)     
     }
     // componentDidMount () {
     //   if (this.props.match.params){
@@ -71,7 +71,7 @@ class Detail extends Component {
             Ad:Advert,
             
         });
-        console.log('Ad'+Advert['name']);
+   //     console.log('Ad'+Advert['name']);
     }
 
     render() { 
@@ -84,7 +84,7 @@ class Detail extends Component {
         ruta=`http://localhost:3001/`+this.state.Ad.photo
             }
     }
-        console.log(this.state._id);
+     //   console.log(this.state._id);
         return (  
             <Fragment>
                 <Navbar />
