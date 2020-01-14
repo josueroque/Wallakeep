@@ -121,8 +121,6 @@ export const getAdsFailure = () => ({
 })
 
 
-
-
 export  function  filterPriceAction  (price) {
     return async (dispatch)=>{
          dispatch(startGetAds());

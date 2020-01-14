@@ -1,6 +1,4 @@
 import React,{Fragment,useEffect,useState} from 'react';
-// import UserConsumer from '../context/UserContext';
-import { Link } from "react-router-dom";
 import Navbar from './Navbar';
 import {getAdsAction,getAdAction,saveAdAction,updateAdAction} from '../actions/adsActions';
 import {getTagsAction,} from '../actions/tagsActions';
@@ -66,13 +64,15 @@ const CreateEdit = (props) => {
                   
                         updateAd(ad);
 
-                       // onTagsChange(Ad.tags) 
+                 
                     }  
                 }
 
              },)
 
-            const [tags,updateTags] =useState (useSelector( state => state.tags.tags ));
+         //   const [tags,updateTags] =useState (useSelector( state => state.tags.tags ));
+
+            const tags =useSelector( state => state.tags.tags );
             const [  selectedTags,onTagsChange]=useState(createParent===true ?[]:(Ad.tags===undefined) ?[]:Ad.tags) ;
             const [  name,onNameChange]=useState(createParent===true  ?'':Ad.name);
             const [  description,onDescriptionChange]=useState(createParent===true ?'':Ad.description);
@@ -82,7 +82,8 @@ const CreateEdit = (props) => {
             const [loading,updateLoading]=useState(false); 
             const  [ afterSave,updateAfterSave]=useState(false);
            const [  afterSaveMessage,updateAfterSaveMessage]=useState('Datos Guardados!!') ;
-          
+           const saveAd=(ad) =>dispatch(saveAdAction(ad));
+           const editAd=(ad) =>dispatch(updateAdAction(ad));
 
           useEffect(()=>{
             const loadTags = () => dispatch( getTagsAction() ) ;
@@ -93,10 +94,10 @@ const CreateEdit = (props) => {
          if(createParent!==true){
                     if (tags.length===0){
 
-                        let arrayTag=new Array;
-                        arrayTag=localStorage.getItem('tags').split(',');
+                        // let arrayTag=new Array;
+                        // arrayTag=localStorage.getItem('tags').split(',');
 
-                        updateTags(arrayTag);
+                       // updateTags(arrayTag);
                     }
                     onTagsChange({
                         selectedTags:Ad.tags
@@ -125,10 +126,7 @@ const CreateEdit = (props) => {
           
               }
            },[createParent])
-
-           
-            const saveAd=(ad) =>dispatch(saveAdAction(ad));
-            const editAd=(ad) =>dispatch(updateAdAction(ad));
+       
           
             let arreglo=new Array;
             const tagsChanged=(e)=>{
@@ -199,8 +197,7 @@ const saveChanges=async()=>{
         tags:selected,
         id:_id[0]
     }
-  console.log('desde update');  
-  console.log(editedAd);
+
       editAd(editedAd)
 
     await wait(1000);

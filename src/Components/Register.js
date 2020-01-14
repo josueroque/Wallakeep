@@ -1,43 +1,31 @@
-import React,{Component,Fragment} from 'react';
-import {getTags} from '../Api/Api';
-import {UserConsumer} from '../context/UserContext';
+import React,{Fragment,useEffect,useState} from 'react';
+import {useDispatch,useSelector,ReactReduxContext} from 'react-redux';
+//import {getTags} from '../Api/Api';
+import {getTagsAction,} from '../actions/tagsActions';
+//import {UserConsumer} from '../context/UserContext';
 
-class   Register extends Component {
-
-       state={
-            name:'',
-            surname:'',
-            tag:'',
-            tags:[]
-        }
-
-        componentDidMount(){
-            this.getAllTags();
-        }
-        
+const Register = (props) => {
        
-    
-    getAllTags=async()=>{
-        const allTags=await getTags();
-    //    console.log('obtengo'+allTags);
-        this.setState({
-            tags:allTags
-        });
-    }
-   
-    setUser1=(e)=>{
 
-        this.setState({
-            [e.target.name]:e.target.value
-        })
+        const[name,updateName]=useState('');
+        const[surname,updateSurname]=useState('');
+        const[tag,updateTag]=useState('');
+        const tags =useSelector( state => state.tags.tags );
+        const dispatch=useDispatch();
+        useEffect( () => {
+
+            const loadTags = () => dispatch( getTagsAction() ) ;
+           loadTags();
+
+        },[] );
+
+       function setUser1(e){
+        console.log(e.target.value);
+        updateTag(e.target.value) ;
+       }
 
 
-
-
-        
-    }
-    render() { 
-    //    console.log('desde reg '+ this.state.tags);
+       console.log(tags);
         return (  
            
               
@@ -46,10 +34,7 @@ class   Register extends Component {
                <h2 className="text-center"> Formulario de Registro</h2>
                 <div className="container">
                     <br/> 
-                    <UserConsumer>
-                        {(value)=>{
-                        // console.log(value);
-                         return(
+
                     <form 
                     onSubmit={e=> {
                         e.preventDefault();
@@ -59,7 +44,7 @@ class   Register extends Component {
                      localStorage.setItem('name',this.state.name);
                      localStorage.setItem('surname',this.state.surname);
                      localStorage.setItem('tag',this.state.tag);
-                     value.setUser(this.state);
+                    // value.setUser(this.state);
                      this.props.history.push("/list");
                     // console.log('desde context' + value.name);
                     }}         
@@ -72,7 +57,7 @@ class   Register extends Component {
                                  id="name" 
                                  placeholder="Ingrese el nombre" 
                                  name="name"
-                                onChange={this.setUser1}
+                                onChange={e=>updateName(e.target.value)}
                                  required
                                  />
                         </div>
@@ -84,21 +69,21 @@ class   Register extends Component {
                                 name="surname"
                                 id="surname"
                                 placeholder="Ingrese el apellido" 
-                               onChange={this.setUser1}
+                               onChange={e=>updateSurname(e.target.value)}
                                 required
                             />
                         </div>
                         <label for="tags">Tag:</label>
                         <select 
                             className="form-control col-xs-2"
-                          onChange={this.setUser1}
+                             onChange={setUser1}
                             name="tag"
                             id="tag"
                             class="custom-select browser-default" required
                         >
                             <option value="" >--Selecione un tag--</option>
                             {
-                                this.state.tags.map(tag=>
+                               tags.map(tag=>
                                   
                                         <option key={tag}  value={tag} >{tag}</option>
                                  
@@ -107,20 +92,21 @@ class   Register extends Component {
                
 
                         </select>
+
                       
                         <br/>  <br/> <br/>
                         <input type="submit"  className="uk-button uk-button-danger" value="Enviar" ></input>
                     </form>
-                    )
-                }}
-                </UserConsumer>
+                    
+                
+                {/* </UserConsumer> */}
                 </div>
             
                 </Fragment>
       
                                         
         );
-    }
+    
 }
  
 export default Register;

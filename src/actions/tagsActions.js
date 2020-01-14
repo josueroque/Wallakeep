@@ -1,12 +1,8 @@
 import{
-    START_GET_ADS,
-    GET_ADS_SUCCESS,
-    GET_ADS_FAILURE,
+
     START_GET_TAGS,
     GET_TAGS_SUCCESS,
-    GET_TAGS_FAILURE
-  //   FILTER_PRICE,
-  //   FILTER_NAME
+    GET_TAGS_FAILURE,
   } from '../types';
   
   import axios from 'axios';
@@ -22,9 +18,9 @@ import{
               const requestUrl=API_URL+'apiv1/tags';
               
                const response = await axios.get(requestUrl);
-          //    console.log(response);
+              console.log(response);
                let data  = await response.data.results;
-        //       console.log('devuelvo '+data);
+               console.log('devuelvo '+data);
                dispatch(getTagsSuccess(data));
                  
            } catch (error) {
