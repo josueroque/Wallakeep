@@ -6,6 +6,7 @@ import Navbar from './Navbar';
 import {getAdsAction,filterPriceAction,filterNameAction,filterTagAction} from '../actions/adsActions';
 import {getTagsAction,} from '../actions/tagsActions';
 import {useDispatch,useSelector,ReactReduxContext} from 'react-redux';
+//import getUserAction from './actions';
 //import Form from './Form';
 
 const List =()=>  {

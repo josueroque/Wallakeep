@@ -5,7 +5,9 @@ import{
     GET_USER_FAILURE,
     START_SAVE_USER,
     SAVE_USER_SUCCESS,
-    SAVE_USER_FAILURE  } from '../types';
+    SAVE_USER_FAILURE,
+    USER_EXISTS
+} from '../types';
   
   import axios from 'axios';
   //import { getAds } from '../Api/Api';
@@ -13,11 +15,12 @@ import{
   const API_URL='http://localhost:3001/'
   
   
-  export  function  getTagsAction  (tags) {
+  export  function  getUserAction  (user) {
       return async (dispatch)=>{
-           dispatch(startGetTags());
+           dispatch(startGetUser());
            try {
-              const user=localStorage.getItem('user');
+               const user=localStorage.getItem('user');
+               console.log(user);
                dispatch(getUserSuccess(user));
                  
            } catch (error) {
@@ -27,11 +30,17 @@ import{
        }
    }
   
-    export const getUserSuccess=tags=>({
+    export const getUserSuccess=user=>({
       type:GET_USER_SUCCESS,
       payload:user
   })
-  
+
+  export const userExists=exists=>({
+    type:GET_USER_SUCCESS,
+    payload:exists
+})
+
+
   export const startGetUser = () => ({
       type: START_GET_USER
   })

@@ -1,89 +1,55 @@
-import React, { Component,Fragment } from 'react';
-// import{CategoriasConsumer} from '../context/CategoriasContext';
-// import{EventosConsumer} from '../context/EventosContext';
+import React, { useState, useCallback, createContext } from 'react';
 
-class Formulario extends Component {
-    state = {  
-        nombre:'',
-        categoria:''
-    }
+// Creamos un contexto para el formulario
+export const formContext = createContext();
+export const { Provider: FormProvider, Consumer: FormConsumer } = formContext;
 
-    //si el usuario agrega un evento o categoria
-
-    obtenerDatosEvento=e=>{
-        this.setState({
-            [e.target.name]:e.target.value
-        })
-    }
-    render() { 
-        return (
-           <Fragment>
-           
-                           
-              
-           
-           <form
-              onSubmit={e=> {
-                e.preventDefault();
-             // value.obtenerEventos(this.state)
-            }}          
-           >
-                <fieldset className="uk-fieldset uk-margin" >
-                    <legend className="uk-legend uk-text-center">
-                        Lista de Anuncios
-                    </legend> 
-
-                </fieldset>
-                <div className="uk-column-1-4@m uk-margin">
-                    <div className="uk-margin" uk-margin="true" >
-                        <input 
-                            name="nombre"
-                            className="uk-input"
-                            type="text"
-                            placeholder="Nombre de Anuncio"
-                            onChange={this.obtenerDatosEvento}
-                        />
-                    </div>
-
-
-
-                    <div className="uk-margin" uk-margin="true" >
-                        <select
-                        className="uk-select"
-                        name="categoria"
-                        onChange={this.obtenerDatosEvento}
-                        >
-                            <option value="">--Selecciona un tag--</option>
-  
-
-                        </select>
-                    </div>
-                        
-                   
-                    <div className="uk-margin" uk-margin="true" >
-                        <input 
-                            name="precio"
-                            className="uk-input"
-                            type="number"
-                            placeholder="Precio de Anuncio"
-                            onChange={this.obtenerDatosEvento}
-                        />
-                    </div>
-
-                    <div>
-                        <input type="submit" className="uk-button uk-button-danger"
-                        value="Busca por precio"/>
-                    </div>
-                    
-                </div>
-                    
-            </form>
-            
-     
-        </Fragment>
-          );
-    }
+// Hoc para conectar cualquier componente con el contexto del formulario
+// Se puede conectar tambien con useContext(formContext)
+export function withFormContext(WrappedComponent) {
+  return function(props) {
+    return (
+      <FormConsumer>
+        {value => <WrappedComponent {...props} {...value} />}
+      </FormConsumer>
+    );
+  };
 }
- 
-export default Formulario;
 
+
+export default function Form({
+  initialValues = {},
+  validate = () => null,
+  onSubmit = () => {},
+  onError = () => {},
+  children,
+  ...props
+}) {
+  const [value, setValue] = useState(initialValues);
+
+  const handleChange = useCallback(change => {
+    setValue(prevValue => ({
+      ...prevValue,
+      ...change,
+    }));
+  }, []);
+
+  // const handleChange = change => {
+  //   setValue(prevValue => ({...prevValue,...change}));
+  // }
+
+  const handleSubmit = useCallback(
+    event => {
+      event.preventDefault();
+      console.log(value);
+      onSubmit(value);
+    },
+    [ onSubmit, value],
+  );
+
+  return (
+    <form {...props} onSubmit={handleSubmit}>
+      <FormProvider value={{ value, handleChange }}>{children}</FormProvider>
+    </form>
+  );
+}

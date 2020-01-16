@@ -1,31 +1,47 @@
-import React,{Fragment,useEffect,useState} from 'react';
-import {useDispatch,useSelector,ReactReduxContext} from 'react-redux';
-//import {getTags} from '../Api/Api';
-import {getTagsAction,} from '../actions/tagsActions';
+import React,{Component,Fragment} from 'react';
+import {getTags} from '../Api/Api';
 //import {UserConsumer} from '../context/UserContext';
-
-const Register = (props) => {
-       
-
-        const[name,updateName]=useState('');
-        const[surname,updateSurname]=useState('');
-        const[tag,updateTag]=useState('');
-        const tags =useSelector( state => state.tags.tags );
-        const dispatch=useDispatch();
-        useEffect( () => {
-
-            const loadTags = () => dispatch( getTagsAction() ) ;
-           loadTags();
-
-        },[] );
-
-       function setUser1(e){
-        console.log(e.target.value);
-        updateTag(e.target.value) ;
-       }
+import Form from './Form';
+import Input from './Input'; 
 
 
-       console.log(tags);
+class   Register extends Component {
+
+       state={
+
+            tag:'',
+            tags:[]
+        }
+
+        componentDidMount(){
+            this.getAllTags();
+        }
+        
+           
+    getAllTags=async()=>{
+        const allTags=await getTags();
+    //    console.log('obtengo'+allTags);
+        this.setState({
+            tags:allTags
+        });
+    }
+   
+    // setUser1=(e)=>{
+
+    //     this.setState({
+    //         [e.target.name]:e.target.value
+    //     })
+    // }
+    
+     handleSubmit = values => {
+
+        // Genero sesión y la guardo en LS si ha seleccionado "remember"
+//           userLogin(new Session(name, surname), remember);
+
+      };   
+
+    render() { 
+    //    console.log('desde reg '+ this.state.tags);
         return (  
            
               
@@ -34,56 +50,45 @@ const Register = (props) => {
                <h2 className="text-center"> Formulario de Registro</h2>
                 <div className="container">
                     <br/> 
-
-                    <form 
-                    onSubmit={e=> {
-                        e.preventDefault();
-                      //  console.log(e.target.value);
-                     //   console.log(e);
-                     console.log(this.state);
-                     localStorage.setItem('name',this.state.name);
-                     localStorage.setItem('surname',this.state.surname);
-                     localStorage.setItem('tag',this.state.tag);
-                    // value.setUser(this.state);
-                     this.props.history.push("/list");
-                    // console.log('desde context' + value.name);
-                    }}         
+                   <Form
+                         initialValues={{ name: '', surname: '', tag: '' }}   
+                         onSubmit={this.handleSubmit}   
                     >
                         <div className="form-group">
                             <label for="name">Nombre:</label>
-                            <input
+                            <Input
                                 type="text"
                                  className="form-control col-xs-2" 
                                  id="name" 
                                  placeholder="Ingrese el nombre" 
                                  name="name"
-                                onChange={e=>updateName(e.target.value)}
+  //                              onChange={this.setUser1}
                                  required
                                  />
                         </div>
                         <div className="form-group">
                             <label for="surname">Apellido:</label>
-                            <input 
+                            <Input 
                                 type="text" 
                                 className="form-control col-xs-2" 
                                 name="surname"
                                 id="surname"
                                 placeholder="Ingrese el apellido" 
-                               onChange={e=>updateSurname(e.target.value)}
+//                               onChange={this.setUser1}
                                 required
                             />
                         </div>
                         <label for="tags">Tag:</label>
                         <select 
                             className="form-control col-xs-2"
-                             onChange={setUser1}
+                          onChange={this.setUser1}
                             name="tag"
                             id="tag"
                             class="custom-select browser-default" required
                         >
                             <option value="" >--Selecione un tag--</option>
                             {
-                               tags.map(tag=>
+                                this.state.tags.map(tag=>
                                   
                                         <option key={tag}  value={tag} >{tag}</option>
                                  
@@ -92,21 +97,20 @@ const Register = (props) => {
                
 
                         </select>
-
                       
                         <br/>  <br/> <br/>
                         <input type="submit"  className="uk-button uk-button-danger" value="Enviar" ></input>
-                    </form>
+                    </Form>
                     
                 
-                {/* </UserConsumer> */}
+          
                 </div>
             
                 </Fragment>
       
                                         
         );
-    
+    }
 }
  
 export default Register;

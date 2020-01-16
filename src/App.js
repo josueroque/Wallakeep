@@ -11,6 +11,7 @@ import Navbar from './Components/Navbar';
 import ErrorBoundary from './Components/ErrorBoundary';
 import { Provider } from 'react-redux';
 import store from './store';
+
  
 class App  extends Component {
 
