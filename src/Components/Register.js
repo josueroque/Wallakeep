@@ -1,47 +1,50 @@
-import React,{Component,Fragment} from 'react';
+import React,{Component,Fragment, useState, useEffect} from 'react';
 import {getTags} from '../Api/Api';
 //import {UserConsumer} from '../context/UserContext';
 import Form from './Form';
 import Input from './Input'; 
+import {useDispatch,useSelector} from 'react-redux';
+import {saveUserAction} from '../actions/userActions';
 
-
-class   Register extends Component {
-
-       state={
-
-            tag:'',
-            tags:[]
-        }
-
-        componentDidMount(){
-            this.getAllTags();
-        }
-        
-           
-    getAllTags=async()=>{
-        const allTags=await getTags();
-    //    console.log('obtengo'+allTags);
-        this.setState({
-            tags:allTags
-        });
-    }
-   
-    // setUser1=(e)=>{
-
-    //     this.setState({
-    //         [e.target.name]:e.target.value
-    //     })
-    // }
+const Register=(props)=>  {
+       const [tag,setTag]=useState('') ;
+       const [tags,setTags]=useState([]) ;
+       const dispatch=useDispatch();
     
-     handleSubmit = values => {
+    const setTagValue=(e)=>{
 
-        // Genero sesión y la guardo en LS si ha seleccionado "remember"
-//           userLogin(new Session(name, surname), remember);
+        setTag(e.target.value);
+    }
+
+   useEffect(()=>{
+        getAllTags();
+    },[]);
+      
+   const getAllTags=async()=>{
+        const allTags=await getTags();
+
+        setTags(allTags);
+    }
+
+    
+     const actionSubmit = values => {
+      //  console.log(values);
+        const user={name:values.name,surname:values.surname,tag:tag};
+       // console.log(user);
+       console.log(user);
+        if (user.name.length<3||user.surname.length<3 ){
+            alert('Datos no validos');
+
+        }else{
+        const saveUser = () => dispatch(saveUserAction(user) ) ;
+        
+        saveUser();
+        props.history.push("/list");
+        }    
 
       };   
 
-    render() { 
-    //    console.log('desde reg '+ this.state.tags);
+
         return (  
            
               
@@ -52,7 +55,7 @@ class   Register extends Component {
                     <br/> 
                    <Form
                          initialValues={{ name: '', surname: '', tag: '' }}   
-                         onSubmit={this.handleSubmit}   
+                         onSubmit={actionSubmit}   
                     >
                         <div className="form-group">
                             <label for="name">Nombre:</label>
@@ -62,7 +65,6 @@ class   Register extends Component {
                                  id="name" 
                                  placeholder="Ingrese el nombre" 
                                  name="name"
-  //                              onChange={this.setUser1}
                                  required
                                  />
                         </div>
@@ -81,14 +83,14 @@ class   Register extends Component {
                         <label for="tags">Tag:</label>
                         <select 
                             className="form-control col-xs-2"
-                          onChange={this.setUser1}
+                          onChange={setTagValue}
                             name="tag"
                             id="tag"
                             class="custom-select browser-default" required
                         >
                             <option value="" >--Selecione un tag--</option>
                             {
-                                this.state.tags.map(tag=>
+                                tags.map(tag=>
                                   
                                         <option key={tag}  value={tag} >{tag}</option>
                                  
@@ -102,15 +104,14 @@ class   Register extends Component {
                         <input type="submit"  className="uk-button uk-button-danger" value="Enviar" ></input>
                     </Form>
                     
-                
-          
+                         
                 </div>
             
                 </Fragment>
       
                                         
         );
-    }
+    
 }
  
 export default Register;

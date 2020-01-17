@@ -94,44 +94,17 @@ export  function  getAdsAction  (ads) {
 
 
 
-export const saveAdSuccess=ads=>({
-    type:SAVE_AD_SUCCESS,
-    payload:ads
-})
-
-export const startSaveAd = () => ({
-    type: START_SAVE_AD
-})
-
-export const saveAdFailure = () => ({
-    type: SAVE_AD_FAILURE
-})
-
-export const getAdsSuccess=ads=>({
-    type:GET_ADS_SUCCESS,
-    payload:ads
-})
-
-export const startGetAds = () => ({
-    type: START_GET_ADS
-})
-
-export const getAdsFailure = () => ({
-    type: GET_ADS_FAILURE
-})
-
-
 export  function  filterPriceAction  (price) {
     return async (dispatch)=>{
          dispatch(startGetAds());
          try {
-             console.log(price.price1);
+     
             const requestUrl=API_URL+'apiv1/anuncios?price='+price.price1+'-'+price.price2;
-             console.log(requestUrl);
+        
              const response = await axios.get(requestUrl);
-            console.log(response);
+          
              const data  = await response.data.results;
-             console.log('devuelvo '+data);
+            
              
              dispatch(getAdsSuccess(data));
 
@@ -162,8 +135,6 @@ export  function  filterPriceAction  (price) {
              console.log('devuelvo '+data);
              
              dispatch(getAdsSuccess(data));
-
-
                
          } catch (error) {
              console.log(error);
@@ -193,5 +164,32 @@ export  function  filterPriceAction  (price) {
          }
      }
  }
+
+ export const saveAdSuccess=ads=>({
+    type:SAVE_AD_SUCCESS,
+    payload:ads
+})
+
+export const startSaveAd = () => ({
+    type: START_SAVE_AD
+})
+
+export const saveAdFailure = () => ({
+    type: SAVE_AD_FAILURE
+})
+
+export const getAdsSuccess=ads=>({
+    type:GET_ADS_SUCCESS,
+    payload:ads
+})
+
+export const startGetAds = () => ({
+    type: START_GET_ADS
+})
+
+export const getAdsFailure = () => ({
+    type: GET_ADS_FAILURE
+})
+
  
 

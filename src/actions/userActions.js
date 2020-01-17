@@ -30,15 +30,28 @@ import{
        }
    }
   
-    export const getUserSuccess=user=>({
+   export  function  saveUserAction  (user) {
+    return async (dispatch)=>{
+         dispatch( startSaveUser());
+         try {
+            localStorage.setItem('name',user.name);
+            localStorage.setItem('surname',user.surname);
+            localStorage.setItem('tag',user.tag);
+           
+            console.log(user);
+           await  dispatch(saveUserSuccess({payload:user}));
+               
+         } catch (error) {
+             console.log(error);
+             dispatch(getUserFailure());
+         }
+     }
+ }
+
+  export const getUserSuccess=user=>({
       type:GET_USER_SUCCESS,
       payload:user
   })
-
-  export const userExists=exists=>({
-    type:GET_USER_SUCCESS,
-    payload:exists
-})
 
 
   export const startGetUser = () => ({
@@ -49,7 +62,19 @@ import{
       type: GET_USER_FAILURE
   })
   
-  
+export const saveUserSuccess=user=>({
+    type:SAVE_USER_SUCCESS,
+    payload:user
+})
+
+export const startSaveUser = () => ({
+    type: START_SAVE_USER
+})
+
+export const SaveUserFailure = () => ({
+    type: SAVE_USER_FAILURE
+})
+
    
   
   

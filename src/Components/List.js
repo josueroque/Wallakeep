@@ -36,10 +36,8 @@ const List =()=>  {
     const filterByName=(name) =>dispatch(filterNameAction(name));
     const filterByTag=(tag) =>dispatch(filterTagAction(tag));
     
-  
 
-
-        return (
+    return (
         <Fragment>    
             <Navbar />
             <form

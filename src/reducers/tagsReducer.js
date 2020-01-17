@@ -12,7 +12,7 @@ const initialState={
     tag:{}
 }
 
-export default function(state=initialState,action){
+export default function tags(state=initialState,action){
     switch(action.type){
         case START_GET_TAGS:
             return{

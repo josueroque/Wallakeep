@@ -8,12 +8,10 @@ import{
 } from '../types';
 
 const initialState={
-    name:'',
-    surname:'',
-    tag:''
+user:{}
 };
 
-export default function(state=initialState,action){
+export default function users(state=initialState,action){
     switch(action.type){
         case START_GET_USER:
             return{
@@ -38,7 +36,7 @@ export default function(state=initialState,action){
         case SAVE_USER_SUCCESS:
             return{
                 ...state,
-                user:action.payload,
+                user:action.user,
                 error:false,
             }
         case SAVE_USER_FAILURE:

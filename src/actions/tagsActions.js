@@ -16,12 +16,9 @@ import{
            dispatch(startGetTags());
            try {
               const requestUrl=API_URL+'apiv1/tags';
-              
-               const response = await axios.get(requestUrl);
-              console.log(response);
-               let data  = await response.data.results;
-               console.log('devuelvo '+data);
-               dispatch(getTagsSuccess(data));
+              const response = await axios.get(requestUrl);
+              let data  = await response.data.results;
+              dispatch(getTagsSuccess(data));
                  
            } catch (error) {
                console.log(error);
