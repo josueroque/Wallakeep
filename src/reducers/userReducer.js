@@ -35,8 +35,8 @@ export default function users(state=initialState,action){
             } 
         case SAVE_USER_SUCCESS:
             return{
-                ...state,
-                user:action.user,
+             //   ...state,
+                user:action.payload,
                 error:false,
             }
         case SAVE_USER_FAILURE:

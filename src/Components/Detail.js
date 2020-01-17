@@ -1,18 +1,16 @@
 import React,{Component,Fragment} from 'react';
 import { getAd } from '../Api/Api';
-import Header from './Header';
-import UserConsumer from '../context/UserContext';
 import { Link } from "react-router-dom";
 import Navbar from './Navbar';
-//import { Link } from "react-router-dom";
+
 class Detail extends Component {
     constructor(props){
         super(props);
+        console.log(props);
     if (this.props.location.state){
         const { adId,pathname } = this.props.location.state
- 
-     //   console.log('hola '+this.props.match.params);
-        this.state = { 
+
+         this.state = { 
            _id:adId,
            Ad:[]
          };
@@ -27,42 +25,16 @@ class Detail extends Component {
               }; 
           this.getAdvert(id);
         }
-    
-    
 
-   // console.log(this.props.location);
    this.state = { 
                 _id:'',
                 Ad:[]
               }; 
 
-     //this.getDerivedStateFromProps();    
-   //  console.log(this.state)     
     }
-    // componentDidMount () {
-    //   if (this.props.match.params){
-    //     const { handle } = this.props.match.params;
-    //     console.log('handle');
-    //     console.log(handle);
-    //     this.setState({
-    //         _id:handle,
-    //         Ad:[]
-    //     })
-    //   }
-    //   this.getAdvert(this.state._id);
-
-    // }
-    
-    // static getDerivedStateFromProps(props,state){
-    //     return{
-
-    //         name:props.name
-    //     }
-    // }
 
     editAdvert=(e)=>{
         e.preventDefault();
-
     }
 
     getAdvert=async(id)=>{
@@ -71,7 +43,7 @@ class Detail extends Component {
             Ad:Advert,
             
         });
-   //     console.log('Ad'+Advert['name']);
+
     }
 
     render() { 
@@ -84,13 +56,10 @@ class Detail extends Component {
         ruta=`http://localhost:3001/`+this.state.Ad.photo
             }
     }
-     //   console.log(this.state._id);
+ 
         return (  
             <Fragment>
                 <Navbar />
-               {/* // <Header /> */}
-
-                
          
                              <div className="detail-section">     
                                     <div className="card-image">
@@ -102,9 +71,7 @@ class Detail extends Component {
                                            :
                                            <img className="img-detail" src={'http://localhost:3001/'+this.state.Ad.photo} alt='Imagen de anuncio' ></img>
                                            :
-                                           '' 
-                                       
-                                       
+                                           ''                                       
                                       }  
                                     </div>
                                     <div className="content"> 

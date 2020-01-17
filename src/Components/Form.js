@@ -1,11 +1,7 @@
 import React, { useState, useCallback, createContext } from 'react';
-
-// Creamos un contexto para el formulario
 export const formContext = createContext();
 export const { Provider: FormProvider, Consumer: FormConsumer } = formContext;
 
-// Hoc para conectar cualquier componente con el contexto del formulario
-// Se puede conectar tambien con useContext(formContext)
 export function withFormContext(WrappedComponent) {
   return function(props) {
     return (
@@ -16,12 +12,9 @@ export function withFormContext(WrappedComponent) {
   };
 }
 
-
 export default function Form({
   initialValues = {},
-  validate = () => null,
   onSubmit = () => {},
-  onError = () => {},
   children,
   ...props
 }) {

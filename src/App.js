@@ -4,7 +4,6 @@ import Detail from './Components/Detail';
 import CreateEdit from './Components/CreateEdit';
 import Register from './Components/Register';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import UserProvider from './context/UserContext';
 import { withRouter } from 'react-router-dom';
 import Header from './Components/Header';
 import Navbar from './Components/Navbar';
@@ -20,7 +19,7 @@ class App  extends Component {
     return (      
       <div className="text-center">
          <ErrorBoundary>
-            <UserProvider>
+    
               <Router>
               <Provider store={store}>
                 <Switch>
@@ -32,7 +31,7 @@ class App  extends Component {
                 </Switch>
                 </Provider>
             </Router>
-          </UserProvider>
+  
       </ErrorBoundary>
     </div>
     );

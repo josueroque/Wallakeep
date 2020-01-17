@@ -2,13 +2,13 @@ import * as types from '../types';
 import users   from '../reducers/userReducer';
 console.log(users);
 //console.log(user);
-it('should handle a GET_TAGS_SUCCESS action',()=>{
-    const initialState=[];
+it('should handle a SAVE_USER_SUCCESS action',()=>{
+    const initialState=[{user:{}}];
     const action={
         type:types.SAVE_USER_SUCCESS,
-        user:{name:'Josué',surname:'Roque',tag:'mobile'}
+        payload:{name:'Josué',surname:'Roque',tag:'mobile'}
     };
-    const expectedState={user:{name:'Josué',surname:'Roque',tag:'mobile'},error:false};
+    const expectedState={"error": false, "user": {"name": "Josué", "surname": "Roque", "tag": "mobile"}};
     
     expect(users(initialState,action)).toEqual(expectedState);
 });

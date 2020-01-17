@@ -3,12 +3,14 @@ import React, { useCallback } from 'react';
 import { withFormContext } from './Form';
 
 function Input({
-  component: Component = 'input', handleChange: formHandleChange, value: formValue, ...props
-}) {
-  
-    const  name = props.name;
-    //const type=props.type;
-
+        component: Component = 'input',
+        handleChange: formHandleChange, 
+        value: formValue,
+         ...props
+  })
+   {
+      const  name = props.name;
+ 
   const valueKey = useCallback(
     ({ checked, value }) => ( value)
   

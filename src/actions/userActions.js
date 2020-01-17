@@ -31,15 +31,15 @@ import{
    }
   
    export  function  saveUserAction  (user) {
-    return async (dispatch)=>{
+    return async (dispatch)=>{ 
          dispatch( startSaveUser());
          try {
             localStorage.setItem('name',user.name);
             localStorage.setItem('surname',user.surname);
             localStorage.setItem('tag',user.tag);
            
-            console.log(user);
-           await  dispatch(saveUserSuccess({payload:user}));
+        //    console.log(user);
+           await  dispatch(saveUserSuccess(user));
                
          } catch (error) {
              console.log(error);

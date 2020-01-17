@@ -10,18 +10,15 @@ import {useDispatch,useSelector,ReactReduxContext} from 'react-redux';
 //import Form from './Form';
 
 const List =()=>  {
-  //  let tag=localStorage.getItem('tag');
+
     const[price1,onP1Change]=useState('');
     const[price2,onP2Change]=useState('');
     const[tag,onTagChange]=useState(localStorage.getItem('tag'));
-//    const[name,onNameChange]=useState('');
 
     const dispatch=useDispatch();
 
-    // const [tags, getAllTags] = useState('');
-
     useEffect( () => {
-        // Productos cuando el componente este listo
+
         const loadAds = () => dispatch(filterTagAction(tag) ) ;
         loadAds();
         const loadTags = () => dispatch( getTagsAction() ) ;
@@ -65,8 +62,6 @@ const List =()=>  {
                             onChange={e=>filterByName(e.target.value)}
                         />
                     </div>
-
-
 
                     <div className="uk-margin" uk-margin="true" >
                         <select

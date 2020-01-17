@@ -1,46 +1,39 @@
-import React,{Component,Fragment, useState, useEffect} from 'react';
-import {getTags} from '../Api/Api';
-//import {UserConsumer} from '../context/UserContext';
+import React,{Fragment, useState, useEffect} from 'react';
 import Form from './Form';
 import Input from './Input'; 
 import {useDispatch,useSelector} from 'react-redux';
 import {saveUserAction} from '../actions/userActions';
+import {getTagsAction,} from '../actions/tagsActions';
 
 const Register=(props)=>  {
-       const [tag,setTag]=useState('') ;
-       const [tags,setTags]=useState([]) ;
-       const dispatch=useDispatch();
-    
-    const setTagValue=(e)=>{
 
-        setTag(e.target.value);
-    }
-
-   useEffect(()=>{
-        getAllTags();
-    },[]);
-      
-   const getAllTags=async()=>{
-        const allTags=await getTags();
-
-        setTags(allTags);
-    }
-
-    
-     const actionSubmit = values => {
-      //  console.log(values);
-        const user={name:values.name,surname:values.surname,tag:tag};
-       // console.log(user);
-       console.log(user);
-        if (user.name.length<3||user.surname.length<3 ){
-            alert('Datos no validos');
-
-        }else{
-        const saveUser = () => dispatch(saveUserAction(user) ) ;
+        useEffect(()=>{
+            //getAllTags();
+            const loadTags = () => dispatch( getTagsAction() ) ;
+            loadTags();
+        },[]);
         
-        saveUser();
-        props.history.push("/list");
-        }    
+       const [tag,setTag]=useState('') ;
+       const tags = useSelector( state => state.tags.tags );
+       const dispatch=useDispatch();
+     
+        const setTagValue=(e)=>{
+
+            setTag(e.target.value);
+        }
+
+        const actionSubmit = values => {
+            const user={name:values.name,surname:values.surname,tag:tag};
+            console.log(props);
+            if (user.name.length<3||user.surname.length<3 ){
+                alert('Datos no validos');
+
+            }else{
+
+                const saveUser = () => dispatch(saveUserAction(user) ) ;
+                saveUser();
+                props.history.push("/list");
+            }    
 
       };   
 

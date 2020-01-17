@@ -39,7 +39,7 @@ const CreateEdit = (props) => {
             if (tags.length!==0){
                 localStorage.setItem('tags',tags);  
             }
-
+            console.log(props);
         }, []);
 
             const ads=useSelector(state=>state.ads.ads);
@@ -70,7 +70,6 @@ const CreateEdit = (props) => {
 
              },)
 
-         //   const [tags,updateTags] =useState (useSelector( state => state.tags.tags ));
 
             const tags =useSelector( state => state.tags.tags );
             const [  selectedTags,onTagsChange]=useState(createParent===true ?[]:(Ad.tags===undefined) ?[]:Ad.tags) ;
@@ -91,14 +90,8 @@ const CreateEdit = (props) => {
             
                  if (Ad.tags){
 
-         if(createParent!==true){
-                    if (tags.length===0){
+            if(createParent!==true){
 
-                        // let arrayTag=new Array;
-                        // arrayTag=localStorage.getItem('tags').split(',');
-
-                       // updateTags(arrayTag);
-                    }
                     onTagsChange({
                         selectedTags:Ad.tags
                     })
@@ -109,7 +102,7 @@ const CreateEdit = (props) => {
                  onTypeChange(Ad.type);
 
                  onDescriptionChange(Ad.description); 
-         }     
+             }     
     
               
            },[Ad])
@@ -163,104 +156,104 @@ const CreateEdit = (props) => {
     
         const { adId,pathname } = props.location.state;
     }
+    
     const override = css`
     display: block;
     margin: 0 auto;
     border-color: red;
-`;
+    `;
 
-let selected=new Array;
-if(selectedTags.selectedTags===undefined){
-        selected=selectedTags;
-    }else
-    {
-        selected=  selectedTags.selectedTags;  
-    }
-//Guardar
-const wait=async(ms)=> {
-    return new Promise(resolve => {
-      setTimeout(resolve, ms);
-    });
-  }
-
-const saveChanges=async()=>{
-
-
-    try { 
-        updateLoading(true);   
-      //  console.log(_id);
-    let editedAd={
-        name:name,
-        description:description,
-        type:type.toLowerCase(),
-        price:price,
-        tags:selected,
-        id:_id[0]
+    let selected=new Array;
+    if(selectedTags.selectedTags===undefined){
+            selected=selectedTags;
+        }else
+        {
+            selected=  selectedTags.selectedTags;  
+        }
+    //Guardar
+    const wait=async(ms)=> {
+        return new Promise(resolve => {
+        setTimeout(resolve, ms);
+        });
     }
 
-      editAd(editedAd)
+    const saveChanges=async()=>{
 
-    await wait(1000);
-    updateLoading(false);
-    updateAfterSave(true);
-    await wait(1000);
-    updateLoading(false);
-    updateAfterSave(false);
-  //  console.log(response);
+        try { 
+            updateLoading(true);   
+            //  console.log(_id);
+            let editedAd={
+                name:name,
+                description:description,
+                type:type.toLowerCase(),
+                price:price,
+                tags:selected,
+                id:_id[0]
+            }
+
+            editAd(editedAd)
+
+            await wait(1000);
+            updateLoading(false);
+            updateAfterSave(true);
+            await wait(1000);
+            updateLoading(false);
+            updateAfterSave(false);
+        //  console.log(response);
+        }
+
+        catch (error) {
+            console.log(error);
+            await wait(1000); 
+            updateLoading(false);
+            updateAfterSave(true);
+            updateAfterSaveMessage('Ha sucedido un error!!');
+            await wait(1000);
+            updateLoading(false);
+            updateAfterSave(false);
+            updateAfterSaveMessage('Datos guardados!!'); 
+        }
     }
 
-catch (error) {
-    console.log(error);
-    await wait(1000); 
-    updateLoading(false);
-    updateAfterSave(true);
-    updateAfterSaveMessage('Ha sucedido un error!!');
-    await wait(1000);
-    updateLoading(false);
-    updateAfterSave(false);
-    updateAfterSaveMessage('Datos guardados!!'); 
- }
-}
+    const saveNew=async()=>{
 
-const saveNew=async()=>{
-
- try {
-    updateLoading(true);
-  console.log(type);
-  let newType;
-  if (type===''){
-      newType='sell';
-  }
-    let createdAd={
-        name:name,
-        description:description,
-        type:newType.toLowerCase(),
-        price:price,
-        tags:selected,
-        photo:photo
+    try {
+        updateLoading(true);
+    console.log(type);
+    let newType;
+    if (type===''){
+        newType='sell';
     }
+        let createdAd={
+            name:name,
+            description:description,
+            type:newType.toLowerCase(),
+            price:price,
+            tags:selected,
+            photo:photo
+        }
 
-    const response= saveAd(createdAd);
-    //console.log(response);
-    await wait(1000);
-    updateLoading(false);
-    updateAfterSave(true);
-    await wait(1000);
-    updateLoading(false);
-    updateAfterSave(false);
-    await wait(1000);
-    props.history.push("/list");
- } catch (error) {
-    await wait(1000); 
-    updateLoading(false);
-    updateAfterSave(true);
-    updateAfterSaveMessage('Ha sucedido un error!!');
-    console.log(error);
-    await wait(1000);
-    updateLoading(false);
-    updateAfterSave(false);
-    updateAfterSaveMessage('Datos guardados!!'); 
- }
+        const response= saveAd(createdAd);
+        //console.log(response);
+        await wait(1000);
+        updateLoading(false);
+        updateAfterSave(true);
+        await wait(1000);
+        updateLoading(false);
+        updateAfterSave(false);
+        await wait(1000);
+        props.history.push("/list");
+    } catch (error) {
+        await wait(1000); 
+        updateLoading(false);
+        updateAfterSave(true);
+        updateAfterSaveMessage('Ha sucedido un error!!');
+        console.log(error);
+        await wait(1000);
+        updateLoading(false);
+        updateAfterSave(false);
+        updateAfterSaveMessage('Datos guardados!!'); 
+    }
 
 }
 
