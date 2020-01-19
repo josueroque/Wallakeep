@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-
 import { withFormContext } from './Form';
 
 function Input({
@@ -9,7 +8,8 @@ function Input({
          ...props
   })
    {
-      const  name = props.name;
+     
+  const  name = props.name;
  
   const valueKey = useCallback(
     ({ checked, value }) => ( value)
@@ -25,7 +25,7 @@ function Input({
 
   const inputProps = {
     onChange: handleChange,
-    [valueKey({ checked: 'checked', value: 'value' })]: formValue[name],
+    valueKey: formValue[name],
   };
 
   return <Component {...props} {...inputProps} />;

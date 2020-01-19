@@ -1,3 +1,44 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Detail should render 1`] = `undefined`;
+exports[`Detail should render 1`] = `
+<Fragment>
+  <withRouter(Navbar) />
+  <div
+    className="detail-section"
+  >
+    <div
+      className="card-image"
+    />
+    <div
+      className="content"
+    >
+      <h3
+        className="text-center"
+      />
+      <p />
+      <p>
+        Precio: $ undefined
+      </p>
+      <p>
+        Tipo: undefined
+      </p>
+      <Link
+        to={
+          Object {
+            "pathname": "/Create-Edit/undefined",
+            "state": Object {
+              "adId": undefined,
+            },
+          }
+        }
+      >
+        <input
+          className="uk-button uk-button-danger"
+          type="submit"
+          value="Editar"
+        />
+      </Link>
+    </div>
+  </div>
+</Fragment>
+`;

@@ -6,7 +6,7 @@ import Navbar from './Navbar';
 class Detail extends Component {
     constructor(props){
         super(props);
-        console.log(props);
+
     if (this.props.location.state){
         const { adId,pathname } = this.props.location.state
 

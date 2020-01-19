@@ -2,13 +2,11 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import Detail from './Detail';
 
-describe.skip('Detail', () => {
+describe('Detail', () => {
   const defaultProps = {
-       location: {
-        pathname: "/detail/5db1de95f108b11d002b9e03",
-        state: { adId: "5db1de95f108b11d002b9e03"} 
-   }
-};
+
+       location: {state: { adId: "5db1de95f108b11d002b9e03"}} 
+   };
   
   const render = props => shallow(<Detail {...defaultProps} {...props} />);
   let wrapper;
@@ -23,7 +21,7 @@ describe.skip('Detail', () => {
 
 //console.log(defaultProps);
   it.skip('should render the product detail', () => {
-    expect(wrapper.find('.state').props().items).toHaveLength(0);
+    expect(wrapper.find('.location').props().items).toHaveLength(1);
   });
 
 });

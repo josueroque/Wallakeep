@@ -1,11 +1,11 @@
 import React,{Fragment,useEffect,useState} from 'react';
 import Navbar from './Navbar';
-import {getAdsAction,getAdAction,saveAdAction,updateAdAction} from '../actions/adsActions';
+import {getAdsAction,saveAdAction,updateAdAction} from '../actions/adsActions';
 import {getTagsAction,} from '../actions/tagsActions';
-import {useDispatch,useSelector,ReactReduxContext} from 'react-redux';
+import {useDispatch,useSelector} from 'react-redux';
 import { ClipLoader } from 'react-spinners';
 import { css } from '@emotion/core';
-import { isUserWhitespacable } from '@babel/types';
+
 const CreateEdit = (props) => {
     let createParent;
 
@@ -36,9 +36,7 @@ const CreateEdit = (props) => {
             const loadTags = () => dispatch( getTagsAction() ) ;
             loadTags();
 
-            if (tags.length!==0){
-                localStorage.setItem('tags',tags);  
-            }
+  
             console.log(props);
         }, []);
 
@@ -121,8 +119,7 @@ const CreateEdit = (props) => {
            },[createParent])
        
           
-            let arreglo=new Array;
-            const tagsChanged=(e)=>{
+         const tagsChanged=(e)=>{
 
                 let tagsArray;
                 if (selectedTags.selectedTags){
@@ -152,18 +149,14 @@ const CreateEdit = (props) => {
             }
 
 
-    if (props.location.state){
-    
-        const { adId,pathname } = props.location.state;
-    }
-    
+  
     const override = css`
     display: block;
     margin: 0 auto;
     border-color: red;
     `;
 
-    let selected=new Array;
+    let selected=[];
     if(selectedTags.selectedTags===undefined){
             selected=selectedTags;
         }else

@@ -1,13 +1,10 @@
 import React,{Fragment,useEffect,useState} from 'react';
-//import { getAds,getAdName,getTags, filterByTag, filterByPrice } from '../Api/Api';
 import { Link } from "react-router-dom";
-import UserConsumer from '../context/UserContext';
 import Navbar from './Navbar';
 import {getAdsAction,filterPriceAction,filterNameAction,filterTagAction} from '../actions/adsActions';
 import {getTagsAction,} from '../actions/tagsActions';
 import {useDispatch,useSelector,ReactReduxContext} from 'react-redux';
-//import getUserAction from './actions';
-//import Form from './Form';
+
 
 const List =()=>  {
 
@@ -119,7 +116,7 @@ const List =()=>  {
                
                     {ads.map(Ad =>
                       <div key={Ad._id} className="col-md-3 col-sm-6">
-                         <UserConsumer>
+                        
                          <div className="card" >
 
                              <Link   to={{
@@ -154,7 +151,7 @@ const List =()=>  {
                          
                          {/* <input type="submit" className="uk-button uk-button-danger"
                                         value="Editar"/>   */}
-                    </UserConsumer>
+                   
                       </div>
                         )}
 
