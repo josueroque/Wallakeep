@@ -1,68 +1,43 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Practica Wallakeep Redux
 
-## Available Scripts
+## 1. Configurar un store Redux donde se almacenará al menos la siguiente información
 
-In the project directory, you can run:
+  - Componentes que pasaron a manejarse a traves de redux:
+    - Register
+    - List
+    - Create-Edit
+  - Las consultas de estado del usuario y tags pasaron a ser consultadas al stores de redux en lugar de local de
+    local storage.
+  - Las acciones de guardar y editar anuncios pasaron a ejecutarse a traves de redux.           
 
-### `yarn start`
+## 2.Crear las acciones y reducers necesarios para poder cumplir los objetivos del punto 1.
+  - Se crearon los reducers:
+    - adsReducer
+    - tagsReducer
+    - userReducer
+  - Se crearon los siguientes archivos de acciones:
+    - adsActions
+    - tagsActions
+    - userActions
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## 3. Configurar Redux Dev Tools para simplificar las tareas de debugging de la aplicación.
+    Se consfiguraron las Dev tools.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## 4. Formularios   
+   Se crearon los siguientes componentes y se agregaron al componente Register utilizando Hoc y Context
+    - Form
+    - Input
 
-### `yarn test`
+## 5. Refactorizar algún componenente para que use hooks, por ejemplo gestionando su estado con useState o sus efectos con useEffect.
+    Se refactorizaron para usar hooks los siguientes componentes:
+     - List
+     - Create-Edit
+          
+## 6.Testing. Crear tests unitarios, dando al menos un ejemplo de cada uno de estos casos.
+    - Una acción síncrona => adsActions.spec.js 
+    - Una acción asíncrona => tagsActions.spec.js
+    - Un reducer => userReducer.spec.js
+    - Un componente con snapshot testing => Detail.spec.js.snap
+    - Comprobar el funcionamiento de un componente que ejecuta una acción del store => Detail.spec.js
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `yarn build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
