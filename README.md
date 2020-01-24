@@ -24,7 +24,8 @@
     Se consfiguraron las Dev tools.
 
 ## 4. Formularios.   
-   - Se crearon los siguientes componentes y se agregaron al componente Register utilizando Hoc y Context:
+   - Se crearon los siguientes componentes y se agregaron al componente Register utilizando Hoc y Context:     
+   
     - Form
     - Input
 
